@@ -1,4 +1,4 @@
-﻿namespace WebApi.Infraestructure.Persistence
+﻿namespace WebApi.Infrastructure.Persistence
 {
     using System;
     using System.Collections.Generic;

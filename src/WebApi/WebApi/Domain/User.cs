@@ -4,14 +4,17 @@ namespace WebApi.Domain
     {
         public long Id { get; set; }
         public string Username { get; set; }
-        public string Password;
+        public string Password { get; set;}
+        
 
-        public void SetPassword(string password)
+        public User(long id, string username, string password)
         {
-            this.Password = password;
+            Id = id;
+            Username = username;
+            Password = password;
         }
-
-        public bool IsCorrectPassword(string password)
+      
+        public bool IsPassword(string password)
         {
             return this.Password.Equals(password);
         }

@@ -1,44 +1,34 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WebApi.Domain;
-
 namespace WebApi.Services
 {
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Domain;
+
     public interface IUserService
     {
         Task<User> Authenticate(string username, string password);
-        Task<IEnumerable<User>> GetAll();
     }
 
     public class UserService : IUserService
     {
-        // users hardcoded for simplicity, store in a db with hashed passwords in production applications
-        private List<User> _users = new List<User>
-        { 
-            new User { Id = 1, Username = "leanwitzke@gmail.com", Password = "test" } 
-        };
+        private IUserRepository _userRepository;
 
-        public async Task<User> Authenticate(string email, string password)
+        public UserService(IUserRepository userRepository)
         {
-            var user = await Task.Run(() => _users.SingleOrDefault(x => x.Username == email && x.Password == password));
-
-            // return null if user not found
-            if (user == null)
-                return null;
-
-            // authentication successful so return user details without password
-            user.Password = null;
-            return user;
+            _userRepository = userRepository;
         }
 
-        public async Task<IEnumerable<User>> GetAll()
+        public async Task<User> Authenticate(string username, string password)
         {
-            // return users without passwords
-            return await Task.Run(() => _users.Select(x => {
-                x.Password = null;
-                return x;
-            }));
+            //TODO: Get by Username
+            var user = _userRepository.GetAll().SingleOrDefault(x => x.Username == username);
+
+            // return null if user not found
+            if (user == null || !user.IsPassword(password))
+                return null;
+
+            // TODO: return UserDto without password
+            return user;
         }
     }
 }

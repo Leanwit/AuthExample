@@ -132,6 +132,8 @@ namespace WebApi.Test.Infraestructure
             var sut = new InMemoryDatabase(UserSeed.CreateUsers(userCount)).GetInMemoryUserRepository();
             var user = sut.GetById(id);
             user.Id = userCount * 2;
+            Assert.NotNull(sut);
+            Assert.NotNull(user);
             Assert.Throws<InvalidOperationException>(() => sut.Delete(user));
         }
     }

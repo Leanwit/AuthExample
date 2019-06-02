@@ -1,17 +1,17 @@
-using System;
-using System.Net.Http.Headers;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using WebApi.Domain;
-using WebApi.Services;
-
-namespace WebApi.Infraestructure.Handler
+namespace WebApi.Infrastructure.Handler
 {
+    using System;
+    using System.Net.Http.Headers;
+    using System.Security.Claims;
+    using System.Text;
+    using System.Text.Encodings.Web;
+    using System.Threading.Tasks;
+    using Domain;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
+    using Services;
+
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private readonly IUserService _userService;

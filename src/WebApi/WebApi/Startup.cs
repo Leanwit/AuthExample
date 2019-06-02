@@ -5,9 +5,8 @@
     using System.Reflection;
     using Application;
     using Domain;
-    using Infraestructure;
-    using Infraestructure.Handler;
-    using Infraestructure.Persistence;
+    using Infrastructure.Handler;
+    using Infrastructure.Persistence;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;

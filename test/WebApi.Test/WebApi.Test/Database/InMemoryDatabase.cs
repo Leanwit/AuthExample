@@ -1,10 +1,9 @@
 namespace WebApi.Test.Database
 {
     using System.Collections.Generic;
-    using Domain;
+    using Infrastructure.Persistence;
     using Microsoft.EntityFrameworkCore;
-    using WebApi.Infraestructure;
-    using WebApi.Infraestructure.Persistence;
+    using WebApi.Domain;
 
     public class InMemoryDatabase
     {

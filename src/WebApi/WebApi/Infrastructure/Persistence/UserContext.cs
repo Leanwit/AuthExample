@@ -1,4 +1,4 @@
-namespace WebApi.Infraestructure.Persistence
+namespace WebApi.Infrastructure.Persistence
 {
     using Domain;
     using Microsoft.EntityFrameworkCore;

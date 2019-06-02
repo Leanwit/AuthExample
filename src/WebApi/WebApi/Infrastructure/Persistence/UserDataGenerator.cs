@@ -1,4 +1,4 @@
-namespace WebApi.Infraestructure.Persistence
+namespace WebApi.Infrastructure.Persistence
 {
     using System;
     using Domain;
@@ -19,19 +19,9 @@ namespace WebApi.Infraestructure.Persistence
                 }
 
                 context.User.AddRange(
-                    new User()
-                    {
-                        Id = 1,
-                        Username = "leanwitzke",
-                        Password = "asd1"
-                    },
-                    new User()
-                    {
-                        Id = 2,
-                        Username = "witzkito",
-                        Password = "asd2"
-                    });
-
+                    new User(1, "leanwitzke", "asd1"),
+                    new User(2, "witzkito", "asd2")
+                );
 
                 context.SaveChanges();
             }
