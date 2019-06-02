@@ -36,7 +36,7 @@ namespace WebApi.Test.Infraestructure
         public void GetById_Is_Exist_Value(long id, int userCount)
         {
             var sut = new InMemoryDatabase(UserSeed.CreateUsers(userCount)).GetInMemoryUserRepository();
-            var user = sut.GetById(1);
+            var user = sut.GetById(id);
 
             Assert.NotNull(user);
             Assert.True(user.Id == id);
@@ -48,7 +48,7 @@ namespace WebApi.Test.Infraestructure
         public void GetById_Is_Not_Exist_Value(long id, int userCount)
         {
             var sut = new InMemoryDatabase(UserSeed.CreateUsers(userCount)).GetInMemoryUserRepository();
-            var user = sut.GetById(1);
+            var user = sut.GetById(id);
 
             Assert.Null(user);
         }
@@ -75,7 +75,7 @@ namespace WebApi.Test.Infraestructure
         public void Add_Duplicate_Id(long id, int userCount, string email)
         {
             var sut = new InMemoryDatabase(UserSeed.CreateUsers(userCount)).GetInMemoryUserRepository();
-            Assert.Throws<ArgumentException>(() => sut.Add(UserSeed.CreateSpecificUser(id, email)));
+            Assert.Throws<InvalidOperationException>(() => sut.Add(UserSeed.CreateSpecificUser(id, email)));
         }
 
         [Theory]
@@ -105,7 +105,7 @@ namespace WebApi.Test.Infraestructure
 
             var user = sut.GetById(id);
             user.Id = userCount * 2;
-            Assert.Throws<Exception>(() =>  sut.Update(user));
+            Assert.Throws<InvalidOperationException>(() =>  sut.Update(user));
         }
 
         [Theory]
@@ -132,7 +132,7 @@ namespace WebApi.Test.Infraestructure
             var sut = new InMemoryDatabase(UserSeed.CreateUsers(userCount)).GetInMemoryUserRepository();
             var user = sut.GetById(id);
             user.Id = userCount * 2;
-            Assert.Throws<Exception>(() =>  sut.Delete(user));
+            Assert.Throws<InvalidOperationException>(() =>  sut.Delete(user));
         }
     }
 }

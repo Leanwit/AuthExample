@@ -24,26 +24,46 @@ namespace WebApi.Infraestructure
 
         public User GetById(long id)
         {
-            throw new Exception();
-//            return this.UserDbContext.User.FirstOrDefault(u => u.Id == id);
+            return this.UserDbContext.User.FirstOrDefault(u => u.Id == id);
         }
 
         public void Add(User user)
         {
-            throw new Exception();
-//            return this.UserDbContext.User.FirstOrDefault(u => u.Id == id);
+            try
+            {
+                this.UserDbContext.User.Add(user);
+                this.UserDbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public void Update(User user)
         {
-            throw new Exception();
-//            return this.UserDbContext.User.FirstOrDefault(u => u.Id == id);
+            try
+            {
+                this.UserDbContext.User.Update(user);
+                this.UserDbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
         
         public void Delete(User user)
         {
-            throw new Exception();
-//            return this.UserDbContext.User.FirstOrDefault(u => u.Id == id);
+            try
+            {
+                this.UserDbContext.User.Remove(user);
+                this.UserDbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
     }
 }

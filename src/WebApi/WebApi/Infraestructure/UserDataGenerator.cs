@@ -13,10 +13,9 @@ namespace WebApi.Infraestructure
             using (var context = new UserDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<UserDbContext>>()))
             {
-                // Look for any board games.
                 if (context.User.Any())
                 {
-                    return; // Data was already seeded
+                    return;
                 }
 
                 context.User.AddRange(
