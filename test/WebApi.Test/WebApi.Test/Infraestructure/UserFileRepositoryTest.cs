@@ -1,10 +1,10 @@
-using System;
-using System.Linq;
-using WebApi.Test.Database;
-using Xunit;
-
 namespace WebApi.Test.Infraestructure
 {
+    using System;
+    using System.Linq;
+    using Database;
+    using Xunit;
+
     public class UserFileRepositoryTest
     {
         [Fact]
@@ -41,7 +41,7 @@ namespace WebApi.Test.Infraestructure
             Assert.NotNull(user);
             Assert.True(user.Id == id);
         }
-        
+
         [Theory]
         [InlineData(5, 1)]
         [InlineData(50, 15)]
@@ -54,8 +54,8 @@ namespace WebApi.Test.Infraestructure
         }
 
         [Theory]
-        [InlineData(100, 1, "defaultemail@gmail.com")]
-        [InlineData(155, 100, "otheremail@gmail.com")]
+        [InlineData(100, 1, "defaultuser")]
+        [InlineData(155, 100, "otheruser")]
         public void Add_Is_Exist_Value(long id, int userCount, string email)
         {
             var sut = new InMemoryDatabase(UserSeed.CreateUsers(userCount)).GetInMemoryUserRepository();
@@ -65,13 +65,13 @@ namespace WebApi.Test.Infraestructure
 
             Assert.NotNull(userList);
             Assert.True(userList.Any(u => u.Id == id));
-            Assert.True(userList.Any(u => u.Email == email));
+            Assert.True(userList.Any(u => u.Username == email));
             Assert.True(userList.Count() == userCount + 1);
         }
-        
+
         [Theory]
-        [InlineData(5, 10, "defaultemail@gmail.com")]
-        [InlineData(10, 50, "otheremail@gmail.com")]
+        [InlineData(5, 10, "defaultuser")]
+        [InlineData(10, 50, "otheruser")]
         public void Add_Duplicate_Id(long id, int userCount, string email)
         {
             var sut = new InMemoryDatabase(UserSeed.CreateUsers(userCount)).GetInMemoryUserRepository();
@@ -79,23 +79,23 @@ namespace WebApi.Test.Infraestructure
         }
 
         [Theory]
-        [InlineData(1, 5, "defaultemail@gmail.com")]
-        [InlineData(80, 100, "otheremail@gmail.com")]
+        [InlineData(1, 5, "defaultuser")]
+        [InlineData(80, 100, "otheruser")]
         public void Update_Is_Exist_Value(long id, int userCount, string email)
         {
             var sut = new InMemoryDatabase(UserSeed.CreateUsers(userCount)).GetInMemoryUserRepository();
 
             var user = sut.GetById(id);
-            user.Email = email;
+            user.Username = email;
             sut.Update(user);
 
             var userList = sut.GetAll();
 
             Assert.NotNull(userList);
-            Assert.True(userList.Any(u => u.Email == email));
+            Assert.True(userList.Any(u => u.Username == email));
             Assert.True(userList.Count() == userCount);
         }
-        
+
         [Theory]
         [InlineData(1, 5)]
         [InlineData(80, 100)]
@@ -105,7 +105,7 @@ namespace WebApi.Test.Infraestructure
 
             var user = sut.GetById(id);
             user.Id = userCount * 2;
-            Assert.Throws<InvalidOperationException>(() =>  sut.Update(user));
+            Assert.Throws<InvalidOperationException>(() => sut.Update(user));
         }
 
         [Theory]
@@ -123,7 +123,7 @@ namespace WebApi.Test.Infraestructure
             Assert.False(userList.Any(u => u.Id == id));
             Assert.True(userList.Count() == userCount - 1);
         }
-        
+
         [Theory]
         [InlineData(1, 5)]
         [InlineData(80, 100)]
@@ -132,7 +132,7 @@ namespace WebApi.Test.Infraestructure
             var sut = new InMemoryDatabase(UserSeed.CreateUsers(userCount)).GetInMemoryUserRepository();
             var user = sut.GetById(id);
             user.Id = userCount * 2;
-            Assert.Throws<InvalidOperationException>(() =>  sut.Delete(user));
+            Assert.Throws<InvalidOperationException>(() => sut.Delete(user));
         }
     }
 }

@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using WebApi.Domain;
-
-namespace WebApi.Infraestructure
+namespace WebApi.Infraestructure.Persistence
 {
+    using Domain;
+    using Microsoft.EntityFrameworkCore;
+
     public class UserDbContext : DbContext
     {
         public UserDbContext(DbContextOptions<UserDbContext> options)

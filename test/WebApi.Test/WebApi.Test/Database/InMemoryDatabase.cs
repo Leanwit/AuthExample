@@ -1,10 +1,11 @@
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using WebApi.Domain;
-using WebApi.Infraestructure;
-
 namespace WebApi.Test.Database
 {
+    using System.Collections.Generic;
+    using Domain;
+    using Microsoft.EntityFrameworkCore;
+    using WebApi.Infraestructure;
+    using WebApi.Infraestructure.Persistence;
+
     public class InMemoryDatabase
     {
         private List<User> Users { get; set; }
@@ -13,7 +14,7 @@ namespace WebApi.Test.Database
         {
             this.Users = users;
         }
-        
+
         public UserFileRepository GetInMemoryUserRepository()
         {
             DbContextOptions<UserDbContext> options;
@@ -23,13 +24,12 @@ namespace WebApi.Test.Database
             UserDbContext userDbContext = new UserDbContext(options);
             userDbContext.Database.EnsureDeleted();
             userDbContext.Database.EnsureCreated();
-            
+
             userDbContext.AddRange(this.Users);
-            
+
             userDbContext.SaveChanges();
 
             return new UserFileRepository(userDbContext);
         }
-        
     }
 }

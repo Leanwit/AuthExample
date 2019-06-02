@@ -12,6 +12,8 @@ using WebApi.Infraestructure;
 
 namespace WebApi
 {
+    using Infraestructure.Persistence;
+
     public class Program
     {
         public static void Main(string[] args)

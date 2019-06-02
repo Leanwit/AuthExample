@@ -1,11 +1,11 @@
-using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.DependencyInjection;
-using WebApi.Domain;
-
-namespace WebApi.Infraestructure
+namespace WebApi.Infraestructure.Persistence
 {
+    using System;
+    using Domain;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Internal;
+    using Microsoft.Extensions.DependencyInjection;
+
     public class UserDataGenerator
     {
         public static void Initialize(IServiceProvider serviceProvider)
@@ -22,13 +22,13 @@ namespace WebApi.Infraestructure
                     new User()
                     {
                         Id = 1,
-                        Email = "leanwitzke@gmail.com",
+                        Username = "leanwitzke",
                         Password = "asd1"
                     },
                     new User()
                     {
                         Id = 2,
-                        Email = "witzkito@gmail.com",
+                        Username = "witzkito",
                         Password = "asd2"
                     });
 

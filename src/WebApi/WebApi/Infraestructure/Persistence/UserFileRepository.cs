@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace WebApi.Infraestructure
+﻿namespace WebApi.Infraestructure.Persistence
 {
     using System;
-    using System.IO;
-    using WebApi.Domain;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Domain;
 
     public class UserFileRepository : IUserRepository
     {

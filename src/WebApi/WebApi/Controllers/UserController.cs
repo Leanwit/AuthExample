@@ -1,24 +1,27 @@
-
-using WebApi.Application;
-using WebApi.Domain;
-
 namespace WebApi.Controllers
 {
     using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Application;
+    using Domain;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Services;
 
-//    [Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
         private IFinder<User> _userFinder;
-        
-        public UserController(IFinder<User> userFinder)
+        private IUserService _userService;
+
+
+        public UserController(IFinder<User> userFinder, IUserService userService)
         {
             this._userFinder = userFinder;
         }
+
         // GET api/account
         /// <summary>
         /// Get All Users

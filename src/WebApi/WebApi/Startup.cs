@@ -1,21 +1,23 @@
-﻿using WebApi.Application;
-using WebApi.Controllers;
-using WebApi.Domain;
-
-namespace WebApi
+﻿namespace WebApi
 {
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using Swashbuckle.AspNetCore.Swagger;
     using System;
     using System.IO;
     using System.Reflection;
-    using Microsoft.EntityFrameworkCore;
+    using Application;
+    using Domain;
     using Infraestructure;
-    
+    using Infraestructure.Handler;
+    using Infraestructure.Persistence;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Services;
+    using Swashbuckle.AspNetCore.Swagger;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -32,10 +34,13 @@ namespace WebApi
             services.AddDbContext<UserDbContext>(options => options.UseInMemoryDatabase(databaseName: "Users"));
 
             AddSwaggerService(services);
-            
+
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
             services.AddScoped<IFinder<User>, UserFinder>();
             services.AddScoped<IUserRepository, UserFileRepository>();
-
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,9 +67,11 @@ namespace WebApi
             });
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
+
             app.UseMvc();
         }
-        
+
         private void AddSwaggerService(IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
