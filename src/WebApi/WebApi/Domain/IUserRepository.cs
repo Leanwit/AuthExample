@@ -4,6 +4,12 @@ namespace WebApi.Domain
 {
     public interface IUserRepository
     {
-        IEnumerable<User> GetAll();
+        IEnumerable<UserDto> GetAll();
+        UserDto GetById(long id);
+        UserDto GetByUsername(string username);
+
+        UserDto Add(UserDto userDto);
+        UserDto Update(UserDto userDto);
+        void Delete(UserDto userDto);
     }
 }

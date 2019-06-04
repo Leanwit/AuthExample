@@ -14,22 +14,28 @@
             this.UserDbContext = userDbContext;
         }
 
-        public IEnumerable<User> GetAll()
+        public IEnumerable<UserDto> GetAll()
         {
             return this.UserDbContext.User;
         }
 
-        public User GetById(long id)
+        public UserDto GetById(long id)
         {
             return this.UserDbContext.User.FirstOrDefault(u => u.Id == id);
         }
+        
+        public UserDto GetByUsername(string username)
+        {
+            return this.UserDbContext.User.FirstOrDefault(u => u.Username == username);
+        }
 
-        public void Add(User user)
+        public UserDto Add(UserDto userDto)
         {
             try
             {
-                this.UserDbContext.User.Add(user);
+                this.UserDbContext.User.Add(userDto);
                 this.UserDbContext.SaveChanges();
+                return userDto;
             }
             catch (Exception e)
             {
@@ -37,12 +43,13 @@
             }
         }
 
-        public void Update(User user)
+        public UserDto Update(UserDto userDto)
         {
             try
             {
-                this.UserDbContext.User.Update(user);
+                this.UserDbContext.User.Update(userDto);
                 this.UserDbContext.SaveChanges();
+                return userDto;
             }
             catch (Exception e)
             {
@@ -50,11 +57,11 @@
             }
         }
         
-        public void Delete(User user)
+        public void Delete(UserDto userDto)
         {
             try
             {
-                this.UserDbContext.User.Remove(user);
+                this.UserDbContext.User.Remove(userDto);
                 this.UserDbContext.SaveChanges();
             }
             catch (Exception e)

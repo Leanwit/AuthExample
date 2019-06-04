@@ -1,23 +1,19 @@
 namespace WebApi.Controllers
 {
     using System.Collections.Generic;
-    using System.Threading.Tasks;
     using Application;
-    using Domain;
+    using Domain.DTO;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Services;
 
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
-        private IFinder<User> _userFinder;
-        private IUserService _userService;
+        private IUserFinder _userFinder;
 
-
-        public UserController(IFinder<User> userFinder, IUserService userService)
+        public UserController(IUserFinder userFinder)
         {
             this._userFinder = userFinder;
         }
@@ -28,11 +24,13 @@ namespace WebApi.Controllers
         /// </summary>
         /// <returns>A users list</returns>
         /// <response code="201">Returns the newly created item</response>
+        /// <response code="401">Not authorized</response>
         [HttpGet]
         [ProducesResponseType(201)]
-        public ActionResult<IEnumerable<User>> Get()
+        [ProducesResponseType(401)]
+        public ActionResult<IEnumerable<UserDto>> GetAll()
         {
-            return new ActionResult<IEnumerable<User>>(this._userFinder.GetAll());
+            return new ActionResult<IEnumerable<UserDto>>(this._userFinder.GetAll());
         }
 
         // GET api/values/5
@@ -40,6 +38,13 @@ namespace WebApi.Controllers
         public ActionResult<string> Get(int id)
         {
             return "value";
+        }
+
+        // GET api/values/5
+        [HttpGet("{id}")]
+        public ActionResult<UserDto> GetByUsername(string username)
+        {
+            return new ActionResult<UserDto>(this._userFinder.GetByUsername(username));
         }
 
         // POST api/values

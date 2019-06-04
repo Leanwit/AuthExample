@@ -19,8 +19,8 @@ namespace WebApi.Infrastructure.Persistence
                 }
 
                 context.User.AddRange(
-                    new User(1, "leanwitzke", "asd1"),
-                    new User(2, "witzkito", "asd2")
+                    new UserDto(1, "leanwitzke", "asd1"),
+                    new UserDto(2, "witzkito", "asd2")
                 );
 
                 context.SaveChanges();

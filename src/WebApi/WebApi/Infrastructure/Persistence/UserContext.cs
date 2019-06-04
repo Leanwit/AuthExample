@@ -10,6 +10,6 @@ namespace WebApi.Infrastructure.Persistence
         {
         }
 
-        public DbSet<User> User { get; set; }
+        public DbSet<UserDto> User { get; set; }
     }
 }

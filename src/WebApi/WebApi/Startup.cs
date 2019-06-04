@@ -14,7 +14,6 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Services;
     using Swashbuckle.AspNetCore.Swagger;
 
     public class Startup
@@ -37,9 +36,13 @@
             services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
-            services.AddScoped<IFinder<User>, UserFinder>();
+            /* Repository dependencies injection*/
             services.AddScoped<IUserRepository, UserFileRepository>();
-            services.AddScoped<IUserService, UserService>();
+            
+            /* Application dependencies injection*/
+            services.AddScoped<IUserAuthenticate, UserAuthenticate>();
+            services.AddScoped<IUserFinder, UserFinder>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

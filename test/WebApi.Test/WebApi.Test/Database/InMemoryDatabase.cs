@@ -7,9 +7,9 @@ namespace WebApi.Test.Database
 
     public class InMemoryDatabase
     {
-        private List<User> Users { get; set; }
+        private List<UserDto> Users { get; set; }
 
-        public InMemoryDatabase(List<User> users)
+        public InMemoryDatabase(List<UserDto> users)
         {
             this.Users = users;
         }

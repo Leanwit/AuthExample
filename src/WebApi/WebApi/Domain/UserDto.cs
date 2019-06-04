@@ -1,13 +1,13 @@
 namespace WebApi.Domain
 {
-    public class User
+    public class UserDto
     {
         public long Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set;}
         
 
-        public User(long id, string username, string password)
+        public UserDto(long id, string username, string password)
         {
             Id = id;
             Username = username;
