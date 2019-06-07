@@ -2,6 +2,7 @@ namespace WebApi.Application
 {
     using System.Threading.Tasks;
     using Domain;
+    using Domain.DTO;
 
     public interface IUserAuthenticate
     {
@@ -21,13 +22,12 @@ namespace WebApi.Application
         public async Task<UserDto> Authenticate(string username, string password)
         {
             var user = _userRepository.GetByUsername(username);
-
+            
             // return null if user not found
             if (user == null || !user.IsPassword(password))
                 return null;
 
-            // TODO: return UserDto without password
-            return user;
+            return user.MapToDto();
         }
     }
 }

@@ -1,19 +1,25 @@
 namespace WebApi.Domain.DTO
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     public static class UserMapper
     {
-        public static UserDto MapToDto(this Domain.UserDto userDto)
+        public static UserDto MapToDto(this User user)
         {
-            return new UserDto()
+            if (user == null)
             {
-                Id = userDto.Id,
-                Username = userDto.Username
+                return null;
+            }
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Username = user.Username
             };
         }
 
-        public static IEnumerable<UserDto> MapToDto(this IEnumerable<Domain.UserDto> users)
+        public static IEnumerable<UserDto> MapToDto(this IEnumerable<User> users)
         {
             var usersDto = new List<UserDto>();
             foreach (var user in users)

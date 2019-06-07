@@ -7,7 +7,7 @@ namespace WebApi.Infrastructure.Handler
     using System.Text.Encodings.Web;
     using System.Threading.Tasks;
     using Application;
-    using Domain;
+    using Domain.DTO;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;

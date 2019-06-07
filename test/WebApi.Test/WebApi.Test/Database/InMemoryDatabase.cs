@@ -1,15 +1,15 @@
 namespace WebApi.Test.Database
 {
     using System.Collections.Generic;
-    using Infrastructure.Persistence;
     using Microsoft.EntityFrameworkCore;
     using WebApi.Domain;
+    using WebApi.Infrastructure.Persistence;
 
     public class InMemoryDatabase
     {
-        private List<UserDto> Users { get; set; }
+        private List<User> Users { get; set; }
 
-        public InMemoryDatabase(List<UserDto> users)
+        public InMemoryDatabase(List<User> users)
         {
             this.Users = users;
         }

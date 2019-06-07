@@ -1,11 +1,11 @@
-namespace WebApi.Test
+namespace WebApi.Test.Controllers
 {
     using System.Collections.Generic;
-    using Application;
-    using Controllers;
     using Microsoft.AspNetCore.Mvc;
     using Moq;
-    using WebApi.Domain;
+    using WebApi.Application;
+    using WebApi.Controllers;
+    using WebApi.Domain.DTO;
     using Xunit;
 
     public class UserControllerTest

@@ -5,20 +5,20 @@ namespace WebApi.Test.Database
 
     internal static class UserSeed
     {
-        public static List<UserDto> CreateUsers(int count = 1)
+        public static List<User> CreateUsers(int count = 1)
         {
-            var userList = new List<UserDto>();
+            var userList = new List<User>();
             for (int i = 0; i < count; i++)
             {
-                userList.Add(new UserDto(i + 1, "leanwitzke", "asd1"));
+                userList.Add(new User(i + 1, "leanwitzke", "asd1"));
             }
 
             return userList;
         }
 
-        public static UserDto CreateSpecificUser(long id, string email = "default", string password = "asd")
+        public static User CreateSpecificUser(long id, string username = "default", string password = "asd")
         {
-            return new UserDto(id, email, password);
+            return new User(id, username, password);
         }
     }
 }
