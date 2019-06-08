@@ -4,6 +4,7 @@ namespace WebApi.Controllers
     using Domain.DTO;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -52,7 +53,7 @@ namespace WebApi.Controllers
             }
 
             var result = new ActionResult<UserDto>(await _userFinder.GetById(id));
-            
+
             if (result.Value == null)
             {
                 return NotFound("User not found");
@@ -83,7 +84,7 @@ namespace WebApi.Controllers
             }
 
             var result = new ActionResult<UserDto>(await this._userFinder.GetByUsername(username));
-            
+
             if (result.Value == null)
             {
                 return NotFound("User not found");
@@ -92,10 +93,20 @@ namespace WebApi.Controllers
             return result;
         }
 
-        // POST api/values
+        // POST api/User/
+        /// <summary>
+        /// Create a new User
+        /// </summary>
+        /// <returns>The user created</returns>
+        /// <response code="201">User created</response>
+        /// <response code="400">Incorrect parameters</response>
+        /// <response code="401">Not authorized</response>
+        /// <response code="409">Conflict</response>
+
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<UserDto>> Post([FromBody] UserDto userDto)
         {
+            throw new NotImplementedException();
         }
 
         // PUT api/values/5

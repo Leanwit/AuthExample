@@ -4,6 +4,7 @@ namespace WebApi.Test.Controllers
     using Microsoft.AspNetCore.Mvc;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
     using WebApi.Application;
     using WebApi.Controllers;
@@ -140,6 +141,89 @@ namespace WebApi.Test.Controllers
 
                 // Assert
                 Assert.IsType<BadRequestObjectResult>(actionResult.Result);
+            }
+        }
+
+        [Theory]
+        [InlineData("leanwitzke", "password")]
+        [InlineData("defaultuser", "%$qdqw&&132")]
+        public async Task Post_Create_User_Success(string username, string password)
+        {
+            string dbName = $"{nameof(Post_Create_User_Success)}_{username}";
+            long id = 0;
+            using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
+            {
+                UserFileRepository repository = new UserFileRepository(context);
+                UserFinder finder = new UserFinder(repository);
+                var controller = new UserController(finder);
+
+                UserDto dto = new UserDto()
+                {
+                    Username = username,
+                    Password = password
+                };
+
+                var result = await controller.Post(dto);
+                UserDto dtoSuccess = result.Value;
+                id = dtoSuccess.Id;
+                
+                Assert.IsType<ActionResult<UserDto>>(result);
+                Assert.IsType<UserDto>(dtoSuccess);
+            }
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
+            {
+                var user = context.User.FirstOrDefault(u => u.Id == id);
+                Assert.NotNull(user);
+                Assert.True(user.Username == username);
+                Assert.True(user.Password == password);
+            }
+        }
+
+        [Theory]
+        [InlineData("leanwitzke", "")]
+        [InlineData("", "%$qdqw&&132")]
+        public async Task Post_Create_User_Invalid_Model(string username, string password)
+        {
+            string dbName = $"{nameof(Post_Create_User_Invalid_Model)}_{username}";
+            using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
+            {
+                UserFileRepository repository = new UserFileRepository(context);
+                UserFinder finder = new UserFinder(repository);
+                var controller = new UserController(finder);
+
+                UserDto dto = new UserDto()
+                {
+                    Username = username,
+                    Password = password
+                };
+
+                var result = await controller.Post(dto);
+                Assert.IsType<BadRequestObjectResult>(result.Result);
+            }
+        }
+        
+        [Theory]
+        [InlineData(1,"leanwitzke", "password")]
+        public async Task Post_Create_User_Conflict(long id,string username, string password)
+        {
+            string dbName = $"{nameof(Post_Create_User_Conflict)}_{username}";
+            using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
+            {
+                InMemoryDatabaseHelper.Save(new List<User>{UserSeed.CreateSpecificUser(id,username)}, context);
+
+                UserFileRepository repository = new UserFileRepository(context);
+                UserFinder finder = new UserFinder(repository);
+                var controller = new UserController(finder);
+
+                UserDto dto = new UserDto()
+                {
+                    Username = username,
+                    Password = password
+                };
+
+                var result = await controller.Post(dto);
+                Assert.IsType<ConflictObjectResult>(result.Result);
             }
         }
     }
