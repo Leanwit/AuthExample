@@ -3,13 +3,13 @@ namespace WebApi.Application
     using System.Collections.Generic;
     using Domain;
     using Domain.DTO;
-    using UserDto = Domain.DTO.UserDto;
-
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public interface IUserFinder
     {
         IEnumerable<UserDto> GetAll();
-        UserDto GetByUsername(string username);
+        Task<UserDto> GetByUsername(string username);
     }
 
     public class UserFinder : IUserFinder
@@ -28,9 +28,9 @@ namespace WebApi.Application
             return UserMapper.MapToDto(users);
         }
 
-        public UserDto GetByUsername(string username)
+        public async Task<UserDto> GetByUsername(string username)
         {
-            var user = this._userRepository.GetByUsername(username);
+            var user = (await _userRepository.Get(x => x.Username.Equals(username))).FirstOrDefault();
             return UserMapper.MapToDto(user);
         }
     }

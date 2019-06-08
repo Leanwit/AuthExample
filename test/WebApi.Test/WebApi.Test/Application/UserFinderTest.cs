@@ -1,65 +1,101 @@
 namespace WebApi.Test.Application
 {
+    using Database;
+    using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Linq;
-    using Database;
+    using System.Threading.Tasks;
     using WebApi.Application;
     using WebApi.Domain;
+    using WebApi.Infrastructure.Persistence;
     using Xunit;
 
     public class UserFinderTest
     {
-        [Fact]
-        public void GetAll_Return_Value()
+        private DbContextOptions<UserDbContext> CreateDbOptions(string databaseName)
         {
-            var sut = new InMemoryDatabase(UserSeed.CreateUsers()).GetInMemoryUserRepository();
-
-            var userFinder = new UserFinder(sut);
-
-            var users = userFinder.GetAll();
-            Assert.NotNull(users);
-            Assert.True(users.Any());
+            var builder = new DbContextOptionsBuilder<UserDbContext>();
+            builder.UseInMemoryDatabase(databaseName);
+            return builder.Options;
         }
 
         [Fact]
-        public void GetAll_No_Return_Value()
+        public async Task GetAll_Return_Value()
         {
-            var sut = new InMemoryDatabase(UserSeed.CreateUsers(0)).GetInMemoryUserRepository();
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetAll_Return_Value)))
+            {
+                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
+            }
 
-            var userFinder = new UserFinder(sut);
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetAll_Return_Value)))
+            {
+                var repository = new UserFileRepository(context);
+                var userFinder = new UserFinder(repository);
+                var users = userFinder.GetAll();
+                Assert.NotNull(users);
+                Assert.True(users.Any());
+            }
+        }
 
-            var users = userFinder.GetAll();
-            Assert.NotNull(users);
-            Assert.False(users.Any());
+        [Fact]
+        public async Task GetAll_No_Return_Value()
+        {
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetAll_No_Return_Value)))
+            {
+                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(0), context);
+            }
 
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetAll_No_Return_Value)))
+            {
+                var repository = new UserFileRepository(context);
+                var userFinder = new UserFinder(repository);
+
+                var users = userFinder.GetAll();
+                Assert.NotNull(users);
+                Assert.False(users.Any());
+            }
         }
 
         [Theory]
         [InlineData(10, "defaultuser")]
-        public void GetByUsername_Return_Value(long id, string username)
+        public async Task GetByUsername_Return_Value(long id, string username)
         {
-            var sut = new InMemoryDatabase(new List<User>()
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_Return_Value)))
             {
-                UserSeed.CreateSpecificUser(id, username)
-            }).GetInMemoryUserRepository();
+                InMemoryDatabaseHelper.Save(new List<User>()
+                {
+                    UserSeed.CreateSpecificUser(id, username)
+                }, context);
+            }
 
-            var userFinder = new UserFinder(sut);
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_Return_Value)))
+            {
+                var repository = new UserFileRepository(context);
+                var userFinder = new UserFinder(repository);
 
-            var user = userFinder.GetByUsername(username);
-            Assert.NotNull(user);
-            Assert.Equal(user.Username, username);
+                var user = await userFinder.GetByUsername(username);
+                Assert.NotNull(user);
+                Assert.Equal(user.Username, username);
+            }
         }
 
         [Theory]
-        [InlineData(30, "defaultuser")]
-        public void GetByUsername_No_Return_Value(long id, string username)
+        [InlineData(10, "defaultuser")]
+        public async Task GetByUsername_No_Return_Value(long id, string username)
         {
-            var sut = new InMemoryDatabase(UserSeed.CreateUsers()).GetInMemoryUserRepository();
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_No_Return_Value)))
+            {
+                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
+            }
 
-            var userFinder = new UserFinder(sut);
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_No_Return_Value)))
+            {
+                var repository = new UserFileRepository(context);
+                var userFinder = new UserFinder(repository);
 
-            var user = userFinder.GetByUsername(username);
-            Assert.Null(user);
+                var user = await userFinder.GetByUsername(username);
+                Assert.Null(user);
+            }
         }
     }
 }

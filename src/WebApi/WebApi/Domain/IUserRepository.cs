@@ -1,15 +1,17 @@
-using System.Collections.Generic;
-
 namespace WebApi.Domain
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
+
     public interface IUserRepository
     {
         IEnumerable<User> GetAll();
-        User GetById(long id);
-        User GetByUsername(string username);
-
-        User Add(User userDto);
-        User Update(User userDto);
-        void Delete(User userDto);
+        Task<IQueryable<User>> Get(Expression<Func<User, bool>> where, Func<IQueryable<User>, IQueryable<User>> func = null);
+        Task<User> GetById(long id, Func<IQueryable<User>, IQueryable<User>> func = null);
+        Task<User> Update(User entity);
+        Task Delete(User entity);
     }
 }

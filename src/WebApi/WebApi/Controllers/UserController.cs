@@ -1,10 +1,11 @@
 namespace WebApi.Controllers
 {
-    using System.Collections.Generic;
     using Application;
     using Domain.DTO;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     [Authorize]
     [Route("api/[controller]")]
@@ -42,9 +43,9 @@ namespace WebApi.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<UserDto> GetByUsername(string username)
+        public async Task<ActionResult<UserDto>> GetByUsername(string username)
         {
-            return new ActionResult<UserDto>(this._userFinder.GetByUsername(username));
+            return new ActionResult<UserDto>(await this._userFinder.GetByUsername(username));
         }
 
         // POST api/values
