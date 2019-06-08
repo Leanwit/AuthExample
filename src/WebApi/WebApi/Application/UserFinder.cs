@@ -10,6 +10,8 @@ namespace WebApi.Application
     {
         IEnumerable<UserDto> GetAll();
         Task<UserDto> GetByUsername(string username);
+        Task<UserDto> GetById(long id);
+
     }
 
     public class UserFinder : IUserFinder
@@ -31,6 +33,12 @@ namespace WebApi.Application
         public async Task<UserDto> GetByUsername(string username)
         {
             var user = (await _userRepository.Get(x => x.Username.Equals(username))).FirstOrDefault();
+            return UserMapper.MapToDto(user);
+        }
+
+        public async Task<UserDto> GetById(long id)
+        {
+            var user = (await _userRepository.Get(x => x.Id == id)).FirstOrDefault();
             return UserMapper.MapToDto(user);
         }
     }
