@@ -8,7 +8,7 @@ namespace WebApi.Controllers
     using System.Threading.Tasks;
 
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -19,7 +19,7 @@ namespace WebApi.Controllers
             this._userFinder = userFinder;
         }
 
-        // GET api/account
+        // GET api/User/GetAll
         /// <summary>
         /// Get All Users
         /// </summary>
@@ -34,7 +34,7 @@ namespace WebApi.Controllers
             return new ActionResult<IEnumerable<UserDto>>(this._userFinder.GetAll());
         }
 
-        // GET api/{id}
+        // GET api/User/{id}
         /// <summary>
         /// Get user using an ID
         /// </summary>
@@ -44,7 +44,7 @@ namespace WebApi.Controllers
         /// <response code="401">Not authorized</response>
         /// <response code="404">Not found</response>
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDto>> GetById(long id)
+        public async Task<ActionResult<UserDto>> Get(long id)
         {
             if (id <= 0)
             {
@@ -61,7 +61,7 @@ namespace WebApi.Controllers
             return result;
         }
 
-        // GET api/GetByUsername
+        // GET api/User/GetByUsername
         /// <summary>
         /// Get user using an username
         /// </summary>

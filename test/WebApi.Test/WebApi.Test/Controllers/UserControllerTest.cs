@@ -46,7 +46,7 @@ namespace WebApi.Test.Controllers
                 ActionResult<UserDto> actionResult = await controller.GetByUsername(username);
 
                 Assert.IsType<ActionResult<UserDto>>(actionResult);
-                Assert.True(actionResult.Value.Username.Equals(username));
+                Assert.Equal(actionResult.Value.Username, username);
                 Assert.True(actionResult.Value.Id == id);
             }
         }
@@ -99,7 +99,7 @@ namespace WebApi.Test.Controllers
                 UserFinder finder = new UserFinder(repository);
 
                 var controller = new UserController(finder);
-                ActionResult<UserDto> actionResult = await controller.GetById(id);
+                ActionResult<UserDto> actionResult = await controller.Get(id);
 
                 // Assert
                 Assert.IsType<NotFoundObjectResult>(actionResult.Result);
@@ -118,7 +118,7 @@ namespace WebApi.Test.Controllers
                 UserFinder finder = new UserFinder(repository);
 
                 var controller = new UserController(finder);
-                ActionResult<UserDto> actionResult = await controller.GetById(id);
+                ActionResult<UserDto> actionResult = await controller.Get(id);
 
                 // Assert
                 Assert.IsType<ActionResult<UserDto>>(actionResult);
@@ -136,7 +136,7 @@ namespace WebApi.Test.Controllers
                 UserFinder finder = new UserFinder(repository);
 
                 var controller = new UserController(finder);
-                ActionResult<UserDto> actionResult = await controller.GetById(0);
+                ActionResult<UserDto> actionResult = await controller.Get(0);
 
                 // Assert
                 Assert.IsType<BadRequestObjectResult>(actionResult.Result);
