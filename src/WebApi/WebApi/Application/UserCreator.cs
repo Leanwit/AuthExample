@@ -5,12 +5,12 @@ namespace WebApi.Application
 
     interface ICreator
     {
-        Task<UserDto> Create(UserDto user);
+        Task<UserDto> Create(UserCreateDto user);
     }
     
     public class UserCreator : ICreator
     {
-        public Task<UserDto> Create(UserDto user)
+        public Task<UserDto> Create(UserCreateDto user)
         {
             throw new System.NotImplementedException();
         }

@@ -7,4 +7,4 @@ namespace WebApi.Domain.DTO
 
         public string Password { get; set; }
     }
-}
+}    

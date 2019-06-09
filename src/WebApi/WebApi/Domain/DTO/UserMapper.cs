@@ -1,7 +1,6 @@
 namespace WebApi.Domain.DTO
 {
     using System.Collections.Generic;
-    using System.Linq;
 
     public static class UserMapper
     {
@@ -15,7 +14,8 @@ namespace WebApi.Domain.DTO
             return new UserDto
             {
                 Id = user.Id,
-                Username = user.Username
+                Username = user.Username,
+                Password = user.Password
             };
         }
 
