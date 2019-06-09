@@ -157,10 +157,10 @@ namespace WebApi.Test.Controllers
                 UserFinder finder = new UserFinder(repository);
                 var controller = new UserController(finder);
 
-                UserDto dto = new UserDto()
+                UserDto dto = new UserDto
                 {
                     Username = username,
-                    Password = password
+                    PasswordDefined = password
                 };
 
                 var result = await controller.Post(dto);
@@ -195,7 +195,7 @@ namespace WebApi.Test.Controllers
                 UserDto dto = new UserDto()
                 {
                     Username = username,
-                    Password = password
+                    PasswordDefined = password
                 };
 
                 var result = await controller.Post(dto);
@@ -219,7 +219,7 @@ namespace WebApi.Test.Controllers
                 UserDto dto = new UserDto()
                 {
                     Username = username,
-                    Password = password
+                    PasswordDefined = password
                 };
 
                 var result = await controller.Post(dto);
