@@ -102,10 +102,19 @@ namespace WebApi.Controllers
         /// <response code="400">Incorrect parameters</response>
         /// <response code="401">Not authorized</response>
         /// <response code="409">Conflict</response>
-
         [HttpPost]
-        public async Task<ActionResult<UserDto>> Post([FromBody] UserDto userDto)
+        public async Task<ActionResult<UserDto>> Post([FromBody] UserCreateDto dto)
         {
+            if (dto != null && string.IsNullOrWhiteSpace(dto.Username))
+            {
+                return BadRequest("Username null or Empty");
+            }
+
+            if (dto != null && string.IsNullOrWhiteSpace(dto.Password))
+            {
+                return BadRequest("Password null or Empty");
+            }
+
             throw new NotImplementedException();
         }
 

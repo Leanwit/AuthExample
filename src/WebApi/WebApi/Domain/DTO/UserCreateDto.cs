@@ -1,8 +1,7 @@
 namespace WebApi.Domain.DTO
 {
-    public class UserDto
+    public class UserCreateDto
     {
-        public long Id { get; set; }
         public string Username { get; set; }
 
         public string Password { get; set; }
