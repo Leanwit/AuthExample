@@ -1,5 +1,7 @@
 namespace WebApi.Infrastructure.Persistence
 {
+    using System;
+    using System.Collections.Generic;
     using Domain;
     using Microsoft.EntityFrameworkCore;
 
@@ -11,5 +13,15 @@ namespace WebApi.Infrastructure.Persistence
         }
 
         public DbSet<User> User { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder
+                .Entity<User>()
+                .Property(e => e.Roles)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (List<Role>) Enum.Parse(typeof(Role), v.ToString()));
+        }
     }
 }

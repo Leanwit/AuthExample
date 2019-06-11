@@ -6,26 +6,21 @@ namespace WebApi.Domain.DTO
     {
         public static UserDto MapToDto(this User user)
         {
-            if (user == null)
-            {
-                return null;
-            }
+            if (user == null) return null;
 
             return new UserDto
             {
                 Id = user.Id,
                 Username = user.Username,
-                Password = user.Password
+                Password = user.Password,
+                Roles = user.Roles
             };
         }
 
         public static IEnumerable<UserDto> MapToDto(this IEnumerable<User> users)
         {
             var usersDto = new List<UserDto>();
-            foreach (var user in users)
-            {
-                usersDto.Add(MapToDto(user));
-            }
+            foreach (var user in users) usersDto.Add(MapToDto(user));
 
             return usersDto;
         }

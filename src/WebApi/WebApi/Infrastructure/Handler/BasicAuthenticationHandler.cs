@@ -1,6 +1,7 @@
 namespace WebApi.Infrastructure.Handler
 {
     using System;
+    using System.Collections.Generic;
     using System.Net.Http.Headers;
     using System.Security.Claims;
     using System.Text;
@@ -50,11 +51,15 @@ namespace WebApi.Infrastructure.Handler
             if (userDto == null)
                 return AuthenticateResult.Fail("Invalid Username or Password");
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, userDto.Id.ToString()),
-                new Claim(ClaimTypes.Name, userDto.Username),
+                new Claim(ClaimTypes.Name, userDto.Username)
             };
+
+            userDto.Roles.ForEach(r => claims.Add(new Claim(ClaimTypes.Role, r.ToString())));
+
+
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);

@@ -1,6 +1,7 @@
 namespace WebApi.Infrastructure.Persistence
 {
     using System;
+    using System.Collections.Generic;
     using Domain;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Internal;
@@ -13,15 +14,15 @@ namespace WebApi.Infrastructure.Persistence
             using (var context = new UserDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<UserDbContext>>()))
             {
-                if (context.User.Any())
-                {
-                    return;
-                }
+                if (context.User.Any()) return;
 
-                context.User.AddRange(
-                    new User(1, "leanwitzke", "asd1"),
-                    new User(2, "witzkito", "asd2")
-                );
+                var user = new User(1, "leanwitzke", "asd1");
+                user.Roles = new List<Role> {Role.Admin};
+                context.User.Add(user);
+
+                user = new User(2, "witzkito", "asd2");
+                user.Roles = new List<Role> {Role.PageOne, Role.PageTwo};
+                context.User.Add(user);
 
                 context.SaveChanges();
             }

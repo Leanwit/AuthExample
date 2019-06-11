@@ -1,28 +1,28 @@
 namespace WebApi.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Application;
     using Domain.DTO;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
 
     [Authorize]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class UserController : ControllerBase
     {
-        private IUserFinder _userFinder;
+        private readonly IUserFinder _userFinder;
 
         public UserController(IUserFinder userFinder)
         {
-            this._userFinder = userFinder;
+            _userFinder = userFinder;
         }
 
         // GET api/User/GetAll
         /// <summary>
-        /// Get All Users
+        ///     Get All Users
         /// </summary>
         /// <returns>A users list</returns>
         /// <response code="201">Returns the newly created item</response>
@@ -32,12 +32,12 @@ namespace WebApi.Controllers
         [ProducesResponseType(401)]
         public ActionResult<IEnumerable<UserDto>> GetAll()
         {
-            return new ActionResult<IEnumerable<UserDto>>(this._userFinder.GetAll());
+            return new ActionResult<IEnumerable<UserDto>>(_userFinder.GetAll());
         }
 
         // GET api/User/{id}
         /// <summary>
-        /// Get user using an ID
+        ///     Get user using an ID
         /// </summary>
         /// <returns>A user</returns>
         /// <response code="201">Return a user</response>
@@ -47,24 +47,18 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> Get(long id)
         {
-            if (id <= 0)
-            {
-                return BadRequest("Invalid ID");
-            }
+            if (id <= 0) return BadRequest("Invalid ID");
 
             var result = new ActionResult<UserDto>(await _userFinder.GetById(id));
 
-            if (result.Value == null)
-            {
-                return NotFound("User not found");
-            }
+            if (result.Value == null) return NotFound("User not found");
 
             return result;
         }
 
         // GET api/User/GetByUsername
         /// <summary>
-        /// Get user using an username
+        ///     Get user using an username
         /// </summary>
         /// <returns>A user</returns>
         /// <response code="201">Return a user</response>
@@ -78,24 +72,18 @@ namespace WebApi.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<UserDto>> GetByUsername(string username)
         {
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                return BadRequest("Username null or Empty");
-            }
+            if (string.IsNullOrWhiteSpace(username)) return BadRequest("Username null or Empty");
 
-            var result = new ActionResult<UserDto>(await this._userFinder.GetByUsername(username));
+            var result = new ActionResult<UserDto>(await _userFinder.GetByUsername(username));
 
-            if (result.Value == null)
-            {
-                return NotFound("User not found");
-            }
+            if (result.Value == null) return NotFound("User not found");
 
             return result;
         }
 
         // POST api/User/
         /// <summary>
-        /// Create a new User
+        ///     Create a new User
         /// </summary>
         /// <returns>The user created</returns>
         /// <response code="201">User created</response>
@@ -105,15 +93,9 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<UserDto>> Post([FromBody] UserCreateDto dto)
         {
-            if (dto != null && string.IsNullOrWhiteSpace(dto.Username))
-            {
-                return BadRequest("Username null or Empty");
-            }
+            if (dto != null && string.IsNullOrWhiteSpace(dto.Username)) return BadRequest("Username null or Empty");
 
-            if (dto != null && string.IsNullOrWhiteSpace(dto.Password))
-            {
-                return BadRequest("Password null or Empty");
-            }
+            if (dto != null && string.IsNullOrWhiteSpace(dto.Password)) return BadRequest("Password null or Empty");
 
             throw new NotImplementedException();
         }
