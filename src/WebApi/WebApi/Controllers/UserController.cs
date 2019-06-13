@@ -45,6 +45,10 @@ namespace WebApi.Controllers
         /// <response code="401">Not authorized</response>
         /// <response code="404">Not found</response>
         [HttpGet("{id}")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<UserDto>> Get(long id)
         {
             if (id <= 0) return BadRequest("Invalid ID");
@@ -108,8 +112,9 @@ namespace WebApi.Controllers
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> Delete(long id)
         {
+            throw new NotImplementedException();
         }
     }
 }
