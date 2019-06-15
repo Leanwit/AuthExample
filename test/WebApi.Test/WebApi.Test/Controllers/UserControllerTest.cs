@@ -1,6 +1,5 @@
 namespace WebApi.Test.Controllers
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -69,25 +68,26 @@ namespace WebApi.Test.Controllers
         }
 
         [Theory]
-        [InlineData("leanwitzke", "password")]
-        [InlineData("defaultuser", "%$qdqw&&132")]
-        public async Task Post_Create_User_Success(string username, string password)
+        [InlineData(1, "leanwitzke", "password")]
+        [InlineData(2, "defaultuser", "%$qdqw&&132")]
+        public async Task Post_Create_User_Success(long id, string username, string password)
         {
             var dbName = $"{nameof(Post_Create_User_Success)}_{username}";
-            long id;
+            long idAux;
             using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
             {
                 var controller = GetControllerInstance(context);
 
-                var dto = new UserCreateDto
+                var dto = new UserDto
                 {
+                    Id = id,
                     Username = username,
                     Password = password
                 };
 
                 var result = await controller.Post(dto);
                 var dtoSuccess = result.Value;
-                id = dtoSuccess.Id;
+                idAux = dtoSuccess.Id;
 
                 Assert.IsType<ActionResult<UserDto>>(result);
                 Assert.IsType<UserDto>(dtoSuccess);
@@ -95,7 +95,7 @@ namespace WebApi.Test.Controllers
 
             using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
             {
-                var user = context.User.FirstOrDefault(u => u.Id == id);
+                var user = context.User.FirstOrDefault(u => u.Id == idAux);
                 Assert.NotNull(user);
                 Assert.True(user.Username == username);
                 Assert.True(user.Password == password);
@@ -112,7 +112,7 @@ namespace WebApi.Test.Controllers
             {
                 var controller = GetControllerInstance(context);
 
-                var dto = new UserCreateDto
+                var dto = new UserDto
                 {
                     Username = username,
                     Password = password
@@ -134,14 +134,14 @@ namespace WebApi.Test.Controllers
 
                 var controller = GetControllerInstance(context);
 
-                var dto = new UserCreateDto
+                var dto = new UserDto
                 {
                     Username = username,
                     Password = password
                 };
 
                 var result = await controller.Post(dto);
-                Assert.IsType<ConflictObjectResult>(result.Result);
+                Assert.IsType<BadRequestObjectResult>(result.Result);
             }
         }
 
@@ -153,7 +153,10 @@ namespace WebApi.Test.Controllers
             using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
             {
                 InMemoryDatabaseHelper.Save(new List<User> {UserSeed.CreateSpecificUser(id, username)}, context);
+            }
 
+            using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
+            {
                 var controller = GetControllerInstance(context);
 
                 var result = await controller.Delete(id);
@@ -162,7 +165,32 @@ namespace WebApi.Test.Controllers
 
             using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
             {
-                Assert.True(context.User.Any(u => u.Id == id));
+                Assert.False(context.User.Any(u => u.Id == id));
+            }
+        }
+
+        [Theory]
+        [InlineData(1, 10)]
+        public async Task Delete_Existing_User_Multiple_Users(long id, int userCount)
+        {
+            var dbName = $"{nameof(Delete_Existing_User_Multiple_Users)}_{id}";
+            using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
+            {
+                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(userCount), context);
+            }
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
+            {
+                var controller = GetControllerInstance(context);
+
+                var result = await controller.Delete(id);
+                Assert.IsType<OkResult>(result);
+            }
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
+            {
+                Assert.False(context.User.Any(u => u.Id == id));
+                Assert.True(context.User.Count() == userCount - 1);
             }
         }
 
@@ -176,16 +204,31 @@ namespace WebApi.Test.Controllers
                 InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
 
                 var controller = GetControllerInstance(context);
+                Assert.IsType<NotFoundObjectResult>(await controller.Delete(id));
+            }
+        }
 
-                await Assert.ThrowsAsync<InvalidOperationException>(async () => await controller.Delete(id));
+        [Theory]
+        [InlineData(-10)]
+        public async Task Delete_Check_Bad_Parameter(long id)
+        {
+            var dbName = $"{nameof(Delete_No_Existing_User)}_{id}";
+            using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
+            {
+                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
+
+                var controller = GetControllerInstance(context);
+                Assert.IsType<BadRequestObjectResult>(await controller.Delete(id));
             }
         }
 
         private UserController GetControllerInstance(UserDbContext context)
         {
-            var repository = new UserFileRepository(context);
-            var finder = new UserFinder(repository);
-            return new UserController(finder);
+            var repository = new UserRepository(context);
+            var userFinder = new UserFind(repository);
+            var userDelete = new UserDelete(repository);
+            var userCreate = new UserCreate(repository);
+            return new UserController(userFinder, userDelete, userCreate);
         }
 
         [Fact]

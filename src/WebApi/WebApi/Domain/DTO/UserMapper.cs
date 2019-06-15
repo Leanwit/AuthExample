@@ -24,5 +24,13 @@ namespace WebApi.Domain.DTO
 
             return usersDto;
         }
+
+
+        public static User MapFromDto(this UserDto userDto)
+        {
+            if (userDto == null) return null;
+
+            return new User(userDto.Id, userDto.Username, userDto.Password);
+        }
     }
 }

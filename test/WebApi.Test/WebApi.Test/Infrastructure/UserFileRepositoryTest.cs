@@ -1,10 +1,9 @@
 namespace WebApi.Test.Infrastructure
 {
-    using Database;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-    using WebApi.Domain;
+    using Database;
     using WebApi.Infrastructure.Persistence;
     using Xunit;
 
@@ -15,31 +14,13 @@ namespace WebApi.Test.Infrastructure
             return $"{nameof(UserFileRepositoryTest)}_{name}";
         }
 
-        [Fact]
-        public void GetAll_Return_Value()
-        {
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(GetAll_Return_Value))))
-            {
-                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
-            }
-
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(GetAll_Return_Value))))
-            {
-                UserFileRepository repository = new UserFileRepository(context);
-                var userList = repository.GetAll();
-
-                Assert.NotNull(userList);
-                Assert.True(Enumerable.Any(userList));
-            }
-        }
-
         [Theory]
         [InlineData(5)]
         [InlineData(50)]
         [InlineData(0)]
         public void GetAll_Is_Correct_Count(int userCount)
         {
-            string dbName = $"{nameof(GetAll_Is_Correct_Count)}_{userCount}";
+            var dbName = $"{nameof(GetAll_Is_Correct_Count)}_{userCount}";
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(dbName)))
             {
                 InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(userCount), context);
@@ -47,11 +28,11 @@ namespace WebApi.Test.Infrastructure
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(dbName)))
             {
-                UserFileRepository repository = new UserFileRepository(context);
+                var repository = new UserRepository(context);
                 var userList = repository.GetAll();
 
                 Assert.NotNull(userList);
-                Assert.Equal(userCount, Enumerable.Count(userList));
+                Assert.Equal(userCount, userList.Count());
             }
         }
 
@@ -61,7 +42,7 @@ namespace WebApi.Test.Infrastructure
         [InlineData(10, 10)]
         public async Task GetById_Is_Exist_Value(long id, int userCount)
         {
-            string dbName = $"{nameof(GetById_Is_Exist_Value)}_{id}_{userCount}";
+            var dbName = $"{nameof(GetById_Is_Exist_Value)}_{id}_{userCount}";
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(dbName)))
             {
@@ -70,7 +51,7 @@ namespace WebApi.Test.Infrastructure
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(dbName)))
             {
-                UserFileRepository repository = new UserFileRepository(context);
+                var repository = new UserRepository(context);
                 var user = await repository.GetById(id);
 
                 Assert.NotNull(user);
@@ -82,7 +63,7 @@ namespace WebApi.Test.Infrastructure
         [InlineData(3, 1)]
         public async Task GetById_Is_Not_Exist_Value(long id, int userCount)
         {
-            string dbName = $"{nameof(GetById_Is_Not_Exist_Value)}_{id}";
+            var dbName = $"{nameof(GetById_Is_Not_Exist_Value)}_{id}";
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(dbName)))
             {
@@ -91,7 +72,7 @@ namespace WebApi.Test.Infrastructure
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(dbName)))
             {
-                UserFileRepository repository = new UserFileRepository(context);
+                var repository = new UserRepository(context);
                 var user = await repository.GetById(id);
 
                 Assert.Null(user);
@@ -105,31 +86,31 @@ namespace WebApi.Test.Infrastructure
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Add_Is_Not_Exist_Value))))
             {
                 InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(userCount), context);
-                UserFileRepository repository = new UserFileRepository(context);
+                var repository = new UserRepository(context);
                 repository.Add(UserSeed.CreateSpecificUser(id, email));
             }
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Add_Is_Not_Exist_Value))))
             {
-                UserFileRepository repository = new UserFileRepository(context);
+                var repository = new UserRepository(context);
                 var userList = repository.GetAll();
 
                 Assert.NotNull(userList);
-                Assert.True(Enumerable.Any(userList, u => u.Id == id));
-                Assert.True(Enumerable.Any(userList, u => u.Username == email));
-                Assert.True(Enumerable.Count(userList) == userCount + 1);
+                Assert.True(userList.Any(u => u.Id == id));
+                Assert.True(userList.Any(u => u.Username == email));
+                Assert.True(userList.Count() == userCount + 1);
             }
         }
 
         [Theory]
         [InlineData(5, 10, "defaultuser")]
-        public void Add_Duplicate_Id(long id, int userCount, string email)
+        public async Task Add_Duplicate_Id(long id, int userCount, string email)
         {
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Add_Duplicate_Id))))
             {
                 InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(userCount), context);
-                UserFileRepository repository = new UserFileRepository(context);
-                Assert.Throws<InvalidOperationException>(() => repository.Add(UserSeed.CreateSpecificUser(id, email)));
+                var repository = new UserRepository(context);
+                await Assert.ThrowsAsync<InvalidOperationException>(async () => await repository.Add(UserSeed.CreateSpecificUser(id, email)));
             }
         }
 
@@ -144,7 +125,7 @@ namespace WebApi.Test.Infrastructure
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Update_Is_Exist_Value))))
             {
-                UserFileRepository repository = new UserFileRepository(context);
+                var repository = new UserRepository(context);
                 var user = await repository.GetById(id);
                 user.Username = email;
                 await repository.Update(user);
@@ -152,12 +133,12 @@ namespace WebApi.Test.Infrastructure
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Update_Is_Exist_Value))))
             {
-                UserFileRepository repository = new UserFileRepository(context);
+                var repository = new UserRepository(context);
                 var userList = repository.GetAll();
 
                 Assert.NotNull(userList);
-                Assert.True(Enumerable.Any<User>(userList, u => u.Username == email));
-                Assert.True(Enumerable.Count<User>(userList) == userCount);
+                Assert.True(userList.Any(u => u.Username == email));
+                Assert.True(userList.Count() == userCount);
             }
         }
 
@@ -172,7 +153,7 @@ namespace WebApi.Test.Infrastructure
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Update_Is_Not_Exist_Value))))
             {
-                UserFileRepository repository = new UserFileRepository(context);
+                var repository = new UserRepository(context);
                 var user = await repository.GetById(id);
                 user.Id = userCount * 10;
                 await Assert.ThrowsAsync<InvalidOperationException>(async () => await repository.Update(user));
@@ -190,18 +171,18 @@ namespace WebApi.Test.Infrastructure
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Exist_Value))))
             {
-                UserFileRepository repository = new UserFileRepository(context);
+                var repository = new UserRepository(context);
                 await repository.Delete(await repository.GetById(id));
             }
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Exist_Value))))
             {
-                UserFileRepository repository = new UserFileRepository(context);
+                var repository = new UserRepository(context);
                 var userList = repository.GetAll();
 
                 Assert.NotNull(userList);
-                Assert.False(Enumerable.Any<User>(userList, u => u.Id == id));
-                Assert.True(Enumerable.Count<User>(userList) == userCount - 1);
+                Assert.False(userList.Any(u => u.Id == id));
+                Assert.True(userList.Count() == userCount - 1);
             }
         }
 
@@ -216,11 +197,29 @@ namespace WebApi.Test.Infrastructure
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Not_Exist_Value))))
             {
-                UserFileRepository repository = new UserFileRepository(context);
+                var repository = new UserRepository(context);
                 var user = await repository.GetById(id);
 
                 user.Id = userCount * 10;
                 await Assert.ThrowsAsync<InvalidOperationException>(() => repository.Delete(user));
+            }
+        }
+
+        [Fact]
+        public void GetAll_Return_Value()
+        {
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(GetAll_Return_Value))))
+            {
+                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
+            }
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(GetAll_Return_Value))))
+            {
+                var repository = new UserRepository(context);
+                var userList = repository.GetAll();
+
+                Assert.NotNull(userList);
+                Assert.True(userList.Any());
             }
         }
     }

@@ -5,6 +5,7 @@
     using System.Reflection;
     using Application;
     using Domain;
+    using Domain.DTO;
     using Infrastructure.Handler;
     using Infrastructure.Persistence;
     using Microsoft.AspNetCore.Authentication;
@@ -29,7 +30,7 @@
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddDbContext<UserDbContext>(options => options.UseInMemoryDatabase(databaseName: "Users"));
+            services.AddDbContext<UserDbContext>(options => options.UseInMemoryDatabase("Users"));
 
             AddSwaggerService(services);
 
@@ -37,26 +38,21 @@
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
             /* Repository dependencies injection*/
-            services.AddScoped<IUserRepository, UserFileRepository>();
-            
+            services.AddScoped<IUserRepository, UserRepository>();
+
             /* Application dependencies injection*/
             services.AddScoped<IUserAuthenticate, UserAuthenticate>();
-            services.AddScoped<IUserFinder, UserFinder>();
-
+            services.AddScoped<IUserFind<UserDto>, UserFind>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
-            {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-            }
 
             app.UseSwagger();
 

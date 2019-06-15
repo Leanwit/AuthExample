@@ -13,11 +13,17 @@ namespace WebApi.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserFinder _userFinder;
+        private readonly IUserCreate<UserDto> _userCreate;
+        private readonly IUserDelete<UserDto> _userDelete;
+        private readonly IUserFind<UserDto> _userFind;
 
-        public UserController(IUserFinder userFinder)
+
+        public UserController(IUserFind<UserDto> userFind, IUserDelete<UserDto> userDelete,
+            IUserCreate<UserDto> userCreate)
         {
-            _userFinder = userFinder;
+            _userFind = userFind;
+            _userDelete = userDelete;
+            _userCreate = userCreate;
         }
 
         // GET api/User/GetAll
@@ -32,7 +38,7 @@ namespace WebApi.Controllers
         [ProducesResponseType(401)]
         public ActionResult<IEnumerable<UserDto>> GetAll()
         {
-            return new ActionResult<IEnumerable<UserDto>>(_userFinder.GetAll());
+            return new ActionResult<IEnumerable<UserDto>>(_userFind.GetAll());
         }
 
         // GET api/User/{id}
@@ -53,7 +59,7 @@ namespace WebApi.Controllers
         {
             if (id <= 0) return BadRequest("Invalid ID");
 
-            var result = new ActionResult<UserDto>(await _userFinder.GetById(id));
+            var result = new ActionResult<UserDto>(await _userFind.GetById(id));
 
             if (result.Value == null) return NotFound("User not found");
 
@@ -78,7 +84,7 @@ namespace WebApi.Controllers
         {
             if (string.IsNullOrWhiteSpace(username)) return BadRequest("Username null or Empty");
 
-            var result = new ActionResult<UserDto>(await _userFinder.GetByUsername(username));
+            var result = new ActionResult<UserDto>(await _userFind.GetByUsername(username));
 
             if (result.Value == null) return NotFound("User not found");
 
@@ -95,13 +101,21 @@ namespace WebApi.Controllers
         /// <response code="401">Not authorized</response>
         /// <response code="409">Conflict</response>
         [HttpPost]
-        public async Task<ActionResult<UserDto>> Post([FromBody] UserCreateDto dto)
+        public async Task<ActionResult<UserDto>> Post([FromBody] UserDto dto)
         {
             if (dto != null && string.IsNullOrWhiteSpace(dto.Username)) return BadRequest("Username null or Empty");
 
             if (dto != null && string.IsNullOrWhiteSpace(dto.Password)) return BadRequest("Password null or Empty");
 
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userCreate.Execute(dto);
+                return user;
+            }
+            catch (InvalidOperationException e)
+            {
+                return BadRequest("Username duplicated");
+            }
         }
 
         // PUT api/values/5
@@ -110,11 +124,34 @@ namespace WebApi.Controllers
         {
         }
 
-        // DELETE api/values/5
+        // DELETE api/User/
+        /// <summary>
+        ///     Delete a User
+        /// </summary>
+        /// <returns>The user created</returns>
+        /// <response code="201">User deleted</response>
+        /// <response code="400">Incorrect parameters</response>
+        /// <response code="401">Not authorized</response>
+        /// <response code="404">User not found</response>
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(long id)
         {
-            throw new NotImplementedException();
+            if (id <= 0) return BadRequest("Invalid ID");
+
+            //todo Use only delete
+            var user = await _userFind.GetById(id);
+
+            if (user == null) return NotFound("User not found");
+
+            try
+            {
+                await _userDelete.Execute(user);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return Conflict(e.Message);
+            }
         }
     }
 }
