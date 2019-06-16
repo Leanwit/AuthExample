@@ -66,6 +66,41 @@ namespace WebApi.Test.Controllers
                 response.Content.Headers.ContentType.ToString());
         }
 
+        [Theory]
+        [InlineData("/api/User/GetAll", "text/json")]
+        [InlineData("/api/User/GetAll", "text/xml")]
+        public async Task Get_Endpoint_Should_Return_Json_Content(string url, string contentType)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = CreateValidAuthorizationHeader();
+            client.DefaultRequestHeaders.Add(HttpRequestHeader.Accept.ToString(), contentType);
+
+            // Act
+            var response = await client.GetAsync(url);
+
+            // Assert
+            Assert.Contains(contentType, response.Content.Headers.ContentType.MediaType);
+        }
+
+        [Theory]
+        [InlineData("/api/User/GetAll", "text/html")]
+        [InlineData("/api/User/GetAll", "text/pdf")]
+        public async Task Get_Endpoint_Should_Return_Not_Acceptable(string url, string contentType)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = CreateValidAuthorizationHeader();
+            client.DefaultRequestHeaders.Add(HttpRequestHeader.Accept.ToString(), contentType);
+
+            // Act
+            var response = await client.GetAsync(url);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotAcceptable, response.StatusCode);
+        }
+
+
         private static AuthenticationHeaderValue CreateValidAuthorizationHeader()
         {
             return new AuthenticationHeaderValue(
