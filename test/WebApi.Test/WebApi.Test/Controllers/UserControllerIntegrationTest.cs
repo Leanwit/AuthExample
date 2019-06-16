@@ -102,7 +102,6 @@ namespace WebApi.Test.Controllers
             Assert.Equal(HttpStatusCode.NotAcceptable, response.StatusCode);
         }
 
-
         private static AuthenticationHeaderValue CreateValidAuthorizationHeader()
         {
             return new AuthenticationHeaderValue(

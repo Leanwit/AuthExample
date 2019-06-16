@@ -4,6 +4,7 @@ namespace WebApi.Test.Application
     using System.Linq;
     using System.Threading.Tasks;
     using Database;
+    using Helper;
     using Microsoft.EntityFrameworkCore;
     using WebApi.Application;
     using WebApi.Domain;
@@ -22,7 +23,7 @@ namespace WebApi.Test.Application
         private UserFind CreateUserFind(UserDbContext context)
         {
             var repository = new UserRepository(context);
-            return new UserFind(repository);
+            return new UserFind(repository, Services.CreateAutoMapperObjectUsingUserProfile());
         }
 
         [Fact]
@@ -59,7 +60,6 @@ namespace WebApi.Test.Application
                 var users = userFinder.GetAll();
 
                 Assert.NotNull(users);
-
                 Assert.True(users.Any());
             }
         }

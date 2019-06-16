@@ -5,6 +5,7 @@ namespace WebApi.Test.Controllers
     using System.Linq;
     using System.Threading.Tasks;
     using Database;
+    using Helper;
     using Microsoft.AspNetCore.Mvc;
     using WebApi.Application;
     using WebApi.Controllers;
@@ -15,6 +16,16 @@ namespace WebApi.Test.Controllers
 
     public class UserControllerTest
     {
+        private UserController GetControllerInstance(UserDbContext context)
+        {
+            var mapper = Services.CreateAutoMapperObjectUsingUserProfile();
+            var repository = new UserRepository(context);
+            var userFinder = new UserFind(repository, mapper);
+            var userDelete = new UserDelete(repository, mapper);
+            var userCreate = new UserCreate(repository, mapper);
+            return new UserController(userFinder, userDelete, userCreate);
+        }
+
         [Theory]
         [InlineData(UserSeed.Username, "")]
         [InlineData("", UserSeed.Password)]
@@ -34,15 +45,6 @@ namespace WebApi.Test.Controllers
                 var result = await controller.Post(dto);
                 Assert.IsType<BadRequestObjectResult>(result.Result);
             }
-        }
-
-        private UserController GetControllerInstance(UserDbContext context)
-        {
-            var repository = new UserRepository(context);
-            var userFinder = new UserFind(repository);
-            var userDelete = new UserDelete(repository);
-            var userCreate = new UserCreate(repository);
-            return new UserController(userFinder, userDelete, userCreate);
         }
 
         [Fact]
@@ -122,8 +124,8 @@ namespace WebApi.Test.Controllers
                 var actionResult = await controller.Get(id);
 
                 // Assert
-                Assert.IsType<ActionResult<UserDto>>(actionResult);
-                Assert.IsType<UserDto>(actionResult.Value);
+                Assert.IsType<ActionResult<UserFindDto>>(actionResult);
+                Assert.IsType<UserFindDto>(actionResult.Value);
                 Assert.True(actionResult.Value.Id == id);
             }
 
@@ -164,7 +166,7 @@ namespace WebApi.Test.Controllers
                 var actionResult = controller.GetAll();
 
                 // Assert
-                Assert.IsType<ActionResult<IEnumerable<UserDto>>>(actionResult);
+                Assert.IsType<ActionResult<IEnumerable<UserFindDto>>>(actionResult);
                 Assert.True(actionResult.Value.Any());
             }
         }
@@ -179,7 +181,7 @@ namespace WebApi.Test.Controllers
 
                 var actionResult = await controller.GetByUsername(UserSeed.Username);
 
-                Assert.IsType<ActionResult<UserDto>>(actionResult);
+                Assert.IsType<ActionResult<UserFindDto>>(actionResult);
                 Assert.Equal(actionResult.Value.Username, UserSeed.Username);
                 Assert.True(actionResult.Value.Id == UserSeed.Id);
             }

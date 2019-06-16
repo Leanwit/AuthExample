@@ -80,7 +80,7 @@ namespace WebApi.Test.Infrastructure
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Exist_Value))))
             {
                 var repository = new UserRepository(context);
-                await repository.Delete(await repository.GetById(userGenerated.Id));
+                await repository.Delete(userGenerated.Id);
             }
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Exist_Value))))
@@ -138,7 +138,7 @@ namespace WebApi.Test.Infrastructure
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Not_Exist_Value))))
             {
                 var repository = new UserRepository(context);
-                await Assert.ThrowsAsync<InvalidOperationException>(() => repository.Delete(UserSeed.CreateUserTest()));
+                await Assert.ThrowsAsync<InvalidOperationException>(() => repository.Delete(UserSeed.CreateUserTest().Id));
             }
         }
 
