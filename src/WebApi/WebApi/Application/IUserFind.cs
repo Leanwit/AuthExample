@@ -7,6 +7,6 @@ namespace WebApi.Application
     {
         IEnumerable<T> GetAll();
         Task<T> GetByUsername(string username);
-        Task<T> GetById(long id);
+        Task<T> GetById(string id);
     }
 }

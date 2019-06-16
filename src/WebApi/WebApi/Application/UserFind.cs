@@ -25,7 +25,7 @@ namespace WebApi.Application
             return user.MapToDto();
         }
 
-        public async Task<UserDto> GetById(long id)
+        public async Task<UserDto> GetById(string id)
         {
             var user = (await _userRepository.Get(x => x.Id == id)).FirstOrDefault();
             return user.MapToDto();

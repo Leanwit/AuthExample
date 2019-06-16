@@ -1,17 +1,21 @@
 namespace WebApi.Domain
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
 
     public class User
     {
-        public User(long id, string username, string password)
+        public User(string id, string username, string password)
         {
+            if (!IsGuid(id)) throw new InvalidDataException($"{id} is not a valid GUID");
+
             Id = id;
             Username = username;
             Password = password;
         }
 
-        public long Id { get; set; }
+        public string Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
 
@@ -20,6 +24,12 @@ namespace WebApi.Domain
         public bool IsPassword(string password)
         {
             return Password.Equals(password);
+        }
+
+        private bool IsGuid(string value)
+        {
+            Guid x;
+            return Guid.TryParse(value, out x);
         }
     }
 }

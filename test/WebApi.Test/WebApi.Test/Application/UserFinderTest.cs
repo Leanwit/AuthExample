@@ -19,46 +19,10 @@ namespace WebApi.Test.Application
             return builder.Options;
         }
 
-        [Theory]
-        [InlineData(10, "defaultuser")]
-        public async Task GetByUsername_Return_Value(long id, string username)
+        private UserFind CreateUserFind(UserDbContext context)
         {
-            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_Return_Value)))
-            {
-                InMemoryDatabaseHelper.Save(new List<User>
-                {
-                    UserSeed.CreateSpecificUser(id, username)
-                }, context);
-            }
-
-            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_Return_Value)))
-            {
-                var repository = new UserRepository(context);
-                var userFinder = new UserFind(repository);
-
-                var user = await userFinder.GetByUsername(username);
-                Assert.NotNull(user);
-                Assert.Equal(user.Username, username);
-            }
-        }
-
-        [Theory]
-        [InlineData(10, "defaultuser")]
-        public async Task GetByUsername_No_Return_Value(long id, string username)
-        {
-            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_No_Return_Value)))
-            {
-                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
-            }
-
-            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_No_Return_Value)))
-            {
-                var repository = new UserRepository(context);
-                var userFinder = new UserFind(repository);
-
-                var user = await userFinder.GetByUsername(username);
-                Assert.Null(user);
-            }
+            var repository = new UserRepository(context);
+            return new UserFind(repository);
         }
 
         [Fact]
@@ -71,10 +35,10 @@ namespace WebApi.Test.Application
 
             using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetAll_No_Return_Value)))
             {
-                var repository = new UserRepository(context);
-                var userFinder = new UserFind(repository);
+                var userFinder = CreateUserFind(context);
 
                 var users = userFinder.GetAll();
+
                 Assert.NotNull(users);
                 Assert.False(users.Any());
             }
@@ -90,11 +54,52 @@ namespace WebApi.Test.Application
 
             using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetAll_Return_Value)))
             {
-                var repository = new UserRepository(context);
-                var userFinder = new UserFind(repository);
+                var userFinder = CreateUserFind(context);
+
                 var users = userFinder.GetAll();
+
                 Assert.NotNull(users);
+
                 Assert.True(users.Any());
+            }
+        }
+
+        [Fact]
+        public async Task GetByUsername_No_Return_Value()
+        {
+            var userGenerated = UserSeed.CreateUserTest();
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_No_Return_Value)))
+            {
+                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
+            }
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_No_Return_Value)))
+            {
+                var userFinder = CreateUserFind(context);
+
+                var user = await userFinder.GetByUsername(userGenerated.Username);
+
+                Assert.Null(user);
+            }
+        }
+
+        [Fact]
+        public async Task GetByUsername_Return_Value()
+        {
+            var userGenerated = UserSeed.CreateUserTest();
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_Return_Value)))
+            {
+                InMemoryDatabaseHelper.Save(new List<User> {userGenerated}, context);
+            }
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_Return_Value)))
+            {
+                var userFinder = CreateUserFind(context);
+
+                var user = await userFinder.GetByUsername(userGenerated.Username);
+                Assert.NotNull(user);
+                Assert.Equal(user.Username, userGenerated.Username);
+                Assert.Equal(user.Id, userGenerated.Id);
             }
         }
     }

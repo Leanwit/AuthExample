@@ -22,7 +22,7 @@
             return UserDbContext.User;
         }
 
-        public async Task<User> GetById(long id, Func<IQueryable<User>, IQueryable<User>> func = null)
+        public async Task<User> GetById(string id, Func<IQueryable<User>, IQueryable<User>> func = null)
         {
             if (func != null)
                 return await func(UserDbContext.User).SingleOrDefaultAsync(o => o.Id.Equals(id));
@@ -58,7 +58,11 @@
         {
             try
             {
-                UserDbContext.Entry(entity).State = EntityState.Modified;
+                var user = UserDbContext.User.First(u => u.Id == entity.Id);
+
+                if (user == null) throw new InvalidOperationException();
+
+                UserDbContext.Entry(user).State = EntityState.Modified;
                 await UserDbContext.SaveChangesAsync();
             }
             catch (Exception e)
@@ -74,8 +78,11 @@
         {
             try
             {
+                var user = UserDbContext.User.First(u => u.Id == entity.Id);
+
+                if (user == null) throw new InvalidOperationException();
                 //this.UserDbContext.Entry(entity).State = EntityState.Deleted;
-                UserDbContext.User.Remove(UserDbContext.User.FirstOrDefault(u => u.Id == entity.Id));
+                UserDbContext.User.Remove(user);
                 await UserDbContext.SaveChangesAsync();
             }
             catch (Exception e)

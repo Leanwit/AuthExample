@@ -1,5 +1,9 @@
 namespace WebApi.Test.Domain.DTO
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using Database;
     using WebApi.Domain;
     using WebApi.Domain.DTO;
     using Xunit;
@@ -7,18 +11,31 @@ namespace WebApi.Test.Domain.DTO
     public class UserMapperTest
     {
         [Theory]
-        [InlineData(10, "user", "pass")]
-        [InlineData(15, "", "pass")]
-        [InlineData(20, "user", "")]
-        private void UserDto_MapFromDto(long id, string username, string password)
+        [ClassData(typeof(InlineData))]
+        private void UserDto_MapFromDto(string id, string username, string password)
         {
-            User user = new User(id, username, password);
+            var user = new User(id, username, password);
             var dto = user.MapToDto();
 
             Assert.IsType<UserDto>(dto);
             Assert.True(dto.Id == id);
             Assert.Equal(dto.Username, username);
             Assert.Equal(dto.Password, password);
+        }
+
+        private class InlineData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                yield return new object[] {Guid.NewGuid().ToString(), UserSeed.Username, UserSeed.Password};
+                yield return new object[] {Guid.NewGuid().ToString(), "", UserSeed.Password};
+                yield return new object[] {Guid.NewGuid().ToString(), UserSeed.Username, ""};
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
         }
     }
 }

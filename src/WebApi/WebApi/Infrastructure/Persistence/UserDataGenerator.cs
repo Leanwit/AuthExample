@@ -16,11 +16,11 @@ namespace WebApi.Infrastructure.Persistence
             {
                 if (context.User.Any()) return;
 
-                var user = new User(1, "leanwitzke", "asd1");
+                var user = new User(Guid.NewGuid().ToString(), "leanwitzke", "asd1");
                 user.Roles = new List<Role> {Role.Admin};
                 context.User.Add(user);
 
-                user = new User(2, "witzkito", "asd2");
+                user = new User(Guid.NewGuid().ToString(), "witzkito", "asd2");
                 user.Roles = new List<Role> {Role.PageOne, Role.PageTwo};
                 context.User.Add(user);
 

@@ -1,9 +1,11 @@
 namespace WebApi.Test.Infrastructure
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Database;
+    using WebApi.Domain;
     using WebApi.Infrastructure.Persistence;
     using Xunit;
 
@@ -37,171 +39,106 @@ namespace WebApi.Test.Infrastructure
         }
 
         [Theory]
-        [InlineData(1, 1)]
-        [InlineData(5, 10)]
-        [InlineData(10, 10)]
-        public async Task GetById_Is_Exist_Value(long id, int userCount)
+        [InlineData(1)]
+        [InlineData(10)]
+        public async Task GetById_Is_Exist_Value(int userCount)
         {
-            var dbName = $"{nameof(GetById_Is_Exist_Value)}_{id}_{userCount}";
+            var dbName = $"{nameof(GetById_Is_Exist_Value)}_{userCount}";
+            var userGenerated = UserSeed.CreateUserTest();
+            var users = UserSeed.CreateUsers(userCount);
+            users.Add(userGenerated);
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(dbName)))
             {
-                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(userCount), context);
+                InMemoryDatabaseHelper.Save(users, context);
             }
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(dbName)))
             {
                 var repository = new UserRepository(context);
-                var user = await repository.GetById(id);
+                var user = await repository.GetById(userGenerated.Id);
 
                 Assert.NotNull(user);
-                Assert.True(user.Id == id);
+                Assert.True(user.Id == userGenerated.Id);
+                Assert.Equal(user.Password, userGenerated.Password);
             }
         }
 
         [Theory]
-        [InlineData(3, 1)]
-        public async Task GetById_Is_Not_Exist_Value(long id, int userCount)
+        [InlineData(10)]
+        public async Task Delete_Is_Exist_Value(int userCount)
         {
-            var dbName = $"{nameof(GetById_Is_Not_Exist_Value)}_{id}";
+            var userGenerated = UserSeed.CreateUserTest();
+            var users = UserSeed.CreateUsers(userCount);
+            users.Add(userGenerated);
 
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(dbName)))
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Exist_Value))))
             {
-                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(userCount), context);
+                InMemoryDatabaseHelper.Save(users, context);
             }
 
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(dbName)))
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Exist_Value))))
             {
                 var repository = new UserRepository(context);
-                var user = await repository.GetById(id);
+                await repository.Delete(await repository.GetById(userGenerated.Id));
+            }
 
-                Assert.Null(user);
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Exist_Value))))
+            {
+                Assert.NotNull(context.User);
+                Assert.False(context.User.Any(u => u.Id == userGenerated.Id));
+                Assert.True(context.User.Count() == userCount);
             }
         }
 
-        [Theory]
-        [InlineData(5, 1, "defaultuser")]
-        public void Add_Is_Not_Exist_Value(long id, int userCount, string email)
+        [Fact]
+        public async Task Add_Duplicate_Id()
         {
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Add_Is_Not_Exist_Value))))
+            var userGenerated = UserSeed.CreateUserTest();
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Add_Duplicate_Id))))
+            {
+                InMemoryDatabaseHelper.Save(new List<User> {userGenerated}, context);
+                var repository = new UserRepository(context);
+                await Assert.ThrowsAsync<InvalidOperationException>(async () => await repository.Add(userGenerated));
+            }
+        }
+
+        [Fact]
+        public void Add_New_Value()
+        {
+            var userCount = 10;
+            var userGenerated = UserSeed.CreateUserTest();
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Add_New_Value))))
             {
                 InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(userCount), context);
                 var repository = new UserRepository(context);
-                repository.Add(UserSeed.CreateSpecificUser(id, email));
+                repository.Add(userGenerated);
             }
 
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Add_Is_Not_Exist_Value))))
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Add_New_Value))))
             {
                 var repository = new UserRepository(context);
                 var userList = repository.GetAll();
 
                 Assert.NotNull(userList);
-                Assert.True(userList.Any(u => u.Id == id));
-                Assert.True(userList.Any(u => u.Username == email));
+                Assert.True(userList.Any(u => u.Id == userGenerated.Id));
+                Assert.True(userList.Any(u => u.Username == userGenerated.Username));
                 Assert.True(userList.Count() == userCount + 1);
             }
         }
 
-        [Theory]
-        [InlineData(5, 10, "defaultuser")]
-        public async Task Add_Duplicate_Id(long id, int userCount, string email)
-        {
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Add_Duplicate_Id))))
-            {
-                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(userCount), context);
-                var repository = new UserRepository(context);
-                await Assert.ThrowsAsync<InvalidOperationException>(async () => await repository.Add(UserSeed.CreateSpecificUser(id, email)));
-            }
-        }
-
-        [Theory]
-        [InlineData(5, 10, "defaultuser")]
-        public async Task Update_Is_Exist_Value(long id, int userCount, string email)
-        {
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Update_Is_Exist_Value))))
-            {
-                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(userCount), context);
-            }
-
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Update_Is_Exist_Value))))
-            {
-                var repository = new UserRepository(context);
-                var user = await repository.GetById(id);
-                user.Username = email;
-                await repository.Update(user);
-            }
-
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Update_Is_Exist_Value))))
-            {
-                var repository = new UserRepository(context);
-                var userList = repository.GetAll();
-
-                Assert.NotNull(userList);
-                Assert.True(userList.Any(u => u.Username == email));
-                Assert.True(userList.Count() == userCount);
-            }
-        }
-
-        [Theory]
-        [InlineData(5, 10)]
-        public async Task Update_Is_Not_Exist_Value(long id, int userCount)
-        {
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Update_Is_Not_Exist_Value))))
-            {
-                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(userCount), context);
-            }
-
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Update_Is_Not_Exist_Value))))
-            {
-                var repository = new UserRepository(context);
-                var user = await repository.GetById(id);
-                user.Id = userCount * 10;
-                await Assert.ThrowsAsync<InvalidOperationException>(async () => await repository.Update(user));
-            }
-        }
-
-        [Theory]
-        [InlineData(5, 10)]
-        public async Task Delete_Is_Exist_Value(long id, int userCount)
-        {
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Exist_Value))))
-            {
-                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(userCount), context);
-            }
-
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Exist_Value))))
-            {
-                var repository = new UserRepository(context);
-                await repository.Delete(await repository.GetById(id));
-            }
-
-            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Exist_Value))))
-            {
-                var repository = new UserRepository(context);
-                var userList = repository.GetAll();
-
-                Assert.NotNull(userList);
-                Assert.False(userList.Any(u => u.Id == id));
-                Assert.True(userList.Count() == userCount - 1);
-            }
-        }
-
-        [Theory]
-        [InlineData(5, 10)]
-        public async Task Delete_Is_Not_Exist_Value(long id, int userCount)
+        [Fact]
+        public async Task Delete_Is_Not_Exist_Value()
         {
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Not_Exist_Value))))
             {
-                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(userCount), context);
+                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
             }
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Delete_Is_Not_Exist_Value))))
             {
                 var repository = new UserRepository(context);
-                var user = await repository.GetById(id);
-
-                user.Id = userCount * 10;
-                await Assert.ThrowsAsync<InvalidOperationException>(() => repository.Delete(user));
+                await Assert.ThrowsAsync<InvalidOperationException>(() => repository.Delete(UserSeed.CreateUserTest()));
             }
         }
 
@@ -220,6 +157,67 @@ namespace WebApi.Test.Infrastructure
 
                 Assert.NotNull(userList);
                 Assert.True(userList.Any());
+            }
+        }
+
+        [Fact]
+        public async Task GetById_Is_Not_Exist_Value()
+        {
+            var dbName = nameof(GetById_Is_Not_Exist_Value);
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(dbName)))
+            {
+                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
+            }
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(dbName)))
+            {
+                var repository = new UserRepository(context);
+                var user = await repository.GetById(Guid.NewGuid().ToString());
+
+                Assert.Null(user);
+            }
+        }
+
+        [Fact]
+        public async Task Update_Is_Exist_Value()
+        {
+            var userGenerated = UserSeed.CreateUserTest();
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Update_Is_Exist_Value))))
+            {
+                InMemoryDatabaseHelper.Save(new List<User> {userGenerated}, context);
+            }
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Update_Is_Exist_Value))))
+            {
+                var repository = new UserRepository(context);
+                var user = await repository.GetById(userGenerated.Id);
+                user.Username = UserSeed.Username;
+                await repository.Update(user);
+            }
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Update_Is_Exist_Value))))
+            {
+                var repository = new UserRepository(context);
+                var userList = repository.GetAll();
+
+                Assert.NotNull(userList);
+                Assert.True(userList.Any(u => u.Username == UserSeed.Username));
+            }
+        }
+
+        [Fact]
+        public async Task Update_Is_Not_Exist_Value()
+        {
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Update_Is_Not_Exist_Value))))
+            {
+                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
+            }
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Update_Is_Not_Exist_Value))))
+            {
+                var repository = new UserRepository(context);
+
+                await Assert.ThrowsAsync<InvalidOperationException>(async () => await repository.Update(UserSeed.CreateUserTest()));
             }
         }
     }

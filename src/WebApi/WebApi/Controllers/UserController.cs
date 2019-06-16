@@ -55,10 +55,8 @@ namespace WebApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<UserDto>> Get(long id)
+        public async Task<ActionResult<UserDto>> Get(string id)
         {
-            if (id <= 0) return BadRequest("Invalid ID");
-
             var result = new ActionResult<UserDto>(await _userFind.GetById(id));
 
             if (result.Value == null) return NotFound("User not found");
@@ -134,10 +132,8 @@ namespace WebApi.Controllers
         /// <response code="401">Not authorized</response>
         /// <response code="404">User not found</response>
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(long id)
+        public async Task<ActionResult> Delete(string id)
         {
-            if (id <= 0) return BadRequest("Invalid ID");
-
             //todo Use only delete
             var user = await _userFind.GetById(id);
 
