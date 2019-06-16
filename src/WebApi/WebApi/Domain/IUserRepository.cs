@@ -14,7 +14,7 @@ namespace WebApi.Domain
 
         Task<User> GetById(string id, Func<IQueryable<User>, IQueryable<User>> func = null);
         Task<User> Update(User entity);
-        Task Delete(User entity);
+        Task Delete(string id);
 
         Task<User> Add(User user);
     }

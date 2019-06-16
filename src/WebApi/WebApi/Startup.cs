@@ -4,6 +4,7 @@
     using System.IO;
     using System.Reflection;
     using Application;
+    using AutoMapper;
     using Domain;
     using Domain.DTO;
     using Infrastructure.Handler;
@@ -29,6 +30,8 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper();
+
             services.AddMvc(config =>
             {
                 config.RespectBrowserAcceptHeader = true;
@@ -46,7 +49,7 @@
 
             /* Application dependencies injection*/
             services.AddScoped<IUserAuthenticate, UserAuthenticate>();
-            services.AddScoped<IUserFind<UserDto>, UserFind>();
+            services.AddScoped<IUserFind<UserFindDto>, UserFind>();
             services.AddScoped<IUserDelete<UserDto>, UserDelete>();
             services.AddScoped<IUserCreate<UserDto>, UserCreate>();
         }

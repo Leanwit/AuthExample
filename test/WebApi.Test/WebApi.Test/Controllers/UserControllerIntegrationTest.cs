@@ -39,6 +39,7 @@ namespace WebApi.Test.Controllers
         [InlineData("/api/User/GetByUsername/username")]
         public async Task Get_Endpoint_Admin_Should_No_Return_Unauthorized(string url)
         {
+            // Arrange
             var client = _factory.CreateClient();
 
             client.DefaultRequestHeaders.Authorization = CreateValidAuthorizationHeader();
@@ -53,6 +54,7 @@ namespace WebApi.Test.Controllers
         [InlineData("/")]
         public async Task Swagger_Should_API_Home_Page(string url)
         {
+            // Arrange
             var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = true

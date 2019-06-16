@@ -74,11 +74,11 @@
             return entity;
         }
 
-        public async Task Delete(User entity)
+        public async Task Delete(string id)
         {
             try
             {
-                var user = UserDbContext.User.First(u => u.Id == entity.Id);
+                var user = UserDbContext.User.First(u => u.Id == id);
 
                 if (user == null) throw new InvalidOperationException();
                 //this.UserDbContext.Entry(entity).State = EntityState.Deleted;

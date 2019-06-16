@@ -15,10 +15,10 @@ namespace WebApi.Controllers
     {
         private readonly IUserCreate<UserDto> _userCreate;
         private readonly IUserDelete<UserDto> _userDelete;
-        private readonly IUserFind<UserDto> _userFind;
+        private readonly IUserFind<UserFindDto> _userFind;
 
 
-        public UserController(IUserFind<UserDto> userFind, IUserDelete<UserDto> userDelete,
+        public UserController(IUserFind<UserFindDto> userFind, IUserDelete<UserDto> userDelete,
             IUserCreate<UserDto> userCreate)
         {
             _userFind = userFind;
@@ -36,9 +36,9 @@ namespace WebApi.Controllers
         [HttpGet]
         [ProducesResponseType(201)]
         [ProducesResponseType(401)]
-        public ActionResult<IEnumerable<UserDto>> GetAll()
+        public ActionResult<IEnumerable<UserFindDto>> GetAll()
         {
-            return new ActionResult<IEnumerable<UserDto>>(_userFind.GetAll());
+            return new ActionResult<IEnumerable<UserFindDto>>(_userFind.GetAll());
         }
 
         // GET api/User/{id}
@@ -55,9 +55,9 @@ namespace WebApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<UserDto>> Get(string id)
+        public async Task<ActionResult<UserFindDto>> Get(string id)
         {
-            var result = new ActionResult<UserDto>(await _userFind.GetById(id));
+            var result = new ActionResult<UserFindDto>(await _userFind.GetById(id));
 
             if (result.Value == null) return NotFound("User not found");
 
@@ -78,11 +78,11 @@ namespace WebApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<UserDto>> GetByUsername(string username)
+        public async Task<ActionResult<UserFindDto>> GetByUsername(string username)
         {
             if (string.IsNullOrWhiteSpace(username)) return BadRequest("Username null or Empty");
 
-            var result = new ActionResult<UserDto>(await _userFind.GetByUsername(username));
+            var result = new ActionResult<UserFindDto>(await _userFind.GetByUsername(username));
 
             if (result.Value == null) return NotFound("User not found");
 
@@ -141,7 +141,7 @@ namespace WebApi.Controllers
 
             try
             {
-                await _userDelete.Execute(user);
+                await _userDelete.Execute(user.Id);
                 return Ok();
             }
             catch (Exception e)

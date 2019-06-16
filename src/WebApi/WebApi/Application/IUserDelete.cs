@@ -4,6 +4,6 @@ namespace WebApi.Application
 
     public interface IUserDelete<T>
     {
-        Task<bool> Execute(T entity);
+        Task<bool> Execute(string id);
     }
 }

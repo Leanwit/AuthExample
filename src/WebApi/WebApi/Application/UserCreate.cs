@@ -2,22 +2,24 @@ namespace WebApi.Application
 {
     using System;
     using System.Threading.Tasks;
+    using AutoMapper;
     using Domain;
     using Domain.DTO;
 
     public class UserCreate : UserService, IUserCreate<UserDto>
     {
-        public UserCreate(IUserRepository userRepository) : base(userRepository)
+        public UserCreate(IUserRepository userRepository, IMapper mapper) : base(userRepository, mapper)
         {
         }
 
         public async Task<UserDto> Execute(UserDto userDto)
         {
-            var user = userDto.MapFromDto();
+            var userToCreate = _mapper.Map<User>(userDto);
 
             try
             {
-                return (await _userRepository.Add(user))?.MapToDto();
+                var user = await _userRepository.Add(userToCreate);
+                return _mapper.Map<UserDto>(user);
             }
             catch (InvalidOperationException inv)
             {
