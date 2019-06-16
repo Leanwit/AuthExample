@@ -13,6 +13,7 @@ namespace WebApi.Domain
             Id = id;
             Username = username;
             Password = password;
+            Roles = new List<Role>();
         }
 
         public string Id { get; set; }
@@ -28,8 +29,7 @@ namespace WebApi.Domain
 
         private bool IsGuid(string value)
         {
-            Guid x;
-            return Guid.TryParse(value, out x);
+            return Guid.TryParse(value, out var x);
         }
     }
 }
