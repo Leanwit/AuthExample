@@ -29,7 +29,11 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(config =>
+            {
+                config.RespectBrowserAcceptHeader = true;
+                config.ReturnHttpNotAcceptable = true;
+            }).AddXmlSerializerFormatters().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<UserDbContext>(options => options.UseInMemoryDatabase("Users"));
 
             AddSwaggerService(services);
@@ -43,6 +47,8 @@
             /* Application dependencies injection*/
             services.AddScoped<IUserAuthenticate, UserAuthenticate>();
             services.AddScoped<IUserFind<UserDto>, UserFind>();
+            services.AddScoped<IUserDelete<UserDto>, UserDelete>();
+            services.AddScoped<IUserCreate<UserDto>, UserCreate>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
