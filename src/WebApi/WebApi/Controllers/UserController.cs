@@ -64,7 +64,7 @@ namespace WebApi.Controllers
             return result;
         }
 
-        // GET api/User/GetByUsername
+        // GET api/User/GetByUsername/{username}
         /// <summary>
         ///     Get user using an username
         /// </summary>
@@ -73,7 +73,7 @@ namespace WebApi.Controllers
         /// <response code="400">Username null or Empty</response>
         /// <response code="401">Not authorized</response>
         /// <response code="404">Not found</response>
-        [HttpGet]
+        [HttpGet("{username}")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]

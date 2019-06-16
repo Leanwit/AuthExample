@@ -16,7 +16,7 @@ namespace WebApi.Infrastructure.Persistence
             {
                 if (context.User.Any()) return;
 
-                var user = new User(Guid.NewGuid().ToString(), "leanwitzke", "asd1");
+                var user = new User(Guid.NewGuid().ToString(), "admin", "admin");
                 user.Roles = new List<Role> {Role.Admin};
                 context.User.Add(user);
 
