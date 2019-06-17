@@ -117,7 +117,15 @@ namespace WebApi.Controllers
             }
         }
 
-        // PUT api/values/5
+        // PUT api/User/
+        /// <summary>
+        ///     Modify a User
+        /// </summary>
+        /// <returns>The user modified</returns>
+        /// <response code="201">User modified</response>
+        /// <response code="400">Incorrect parameters</response>
+        /// <response code="401">Not authorized</response>
+        /// <response code="409">Conflict</response>
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> Put([FromBody] UserDto entity)
         {
@@ -136,7 +144,7 @@ namespace WebApi.Controllers
         /// <summary>
         ///     Delete a User
         /// </summary>
-        /// <returns>The user created</returns>
+        /// <returns>The user deleted</returns>
         /// <response code="201">User deleted</response>
         /// <response code="400">Incorrect parameters</response>
         /// <response code="401">Not authorized</response>
