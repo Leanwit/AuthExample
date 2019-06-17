@@ -1,5 +1,6 @@
 namespace WebApi.Test.Controllers
 {
+    using AutoMapper;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Testing;
     using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,8 @@ namespace WebApi.Test.Controllers
         {
             builder.ConfigureServices(services =>
             {
+                services.AddAutoMapper();
+
                 // Create a new service provider.
                 var serviceProvider = new ServiceCollection()
                     .AddEntityFrameworkInMemoryDatabase()

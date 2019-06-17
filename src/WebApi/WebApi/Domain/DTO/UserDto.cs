@@ -9,6 +9,6 @@ namespace WebApi.Domain.DTO
 
         public string Password { get; set; }
 
-        public List<Role> Roles { get; set; }
+        public List<string> Roles { get; set; }
     }
 }

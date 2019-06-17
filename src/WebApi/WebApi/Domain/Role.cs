@@ -1,10 +1,10 @@
 namespace WebApi.Domain
 {
-    public enum Role
+    public class Role
     {
-        Admin,
-        PageOne,
-        PageTwo,
-        PageThree
+        public const string Admin = "Admin";
+        public const string PageOne = "PageOne";
+        public const string PageTwo = "PageTwo";
+        public const string PageThre = "PageThre";
     }
 }

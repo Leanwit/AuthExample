@@ -13,14 +13,14 @@ namespace WebApi.Domain
             Id = id;
             Username = username;
             Password = password;
-            Roles = new List<Role>();
+            Roles = new List<string>();
         }
 
         public string Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
 
-        public List<Role> Roles { get; set; }
+        public List<string> Roles { get; set; }
 
         public bool IsPassword(string password)
         {

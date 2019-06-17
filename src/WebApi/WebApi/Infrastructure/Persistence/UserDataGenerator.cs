@@ -17,11 +17,11 @@ namespace WebApi.Infrastructure.Persistence
                 if (context.User.Any()) return;
 
                 var user = new User("fbb27b43-179b-4898-b9af-cdda8ef4a503", "admin", "admin");
-                user.Roles = new List<Role> {Role.Admin};
+                user.Roles = new List<string> {Role.Admin};
                 context.User.Add(user);
 
                 user = new User(Guid.NewGuid().ToString(), "witzkito", "asd2");
-                user.Roles = new List<Role> {Role.PageOne, Role.PageTwo};
+                user.Roles = new List<string> {Role.PageOne, Role.PageTwo};
                 context.User.Add(user);
 
                 context.SaveChanges();

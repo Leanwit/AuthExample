@@ -21,7 +21,7 @@ namespace WebApi.Infrastructure.Persistence
                 .Property(e => e.Roles)
                 .HasConversion(
                     v => v.ToString(),
-                    v => (List<Role>) Enum.Parse(typeof(Role), v.ToString()));
+                    v => (List<string>) Enum.Parse(typeof(Role), v.ToString()));
         }
     }
 }

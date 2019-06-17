@@ -6,6 +6,6 @@ namespace WebApi.Domain.DTO
     {
         public string Id { get; set; }
         public string Username { get; set; }
-        public List<Role> Roles { get; set; }
+        public List<string> Roles { get; set; }
     }
 }

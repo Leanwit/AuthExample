@@ -4,11 +4,12 @@ namespace WebApi.Controllers
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Application;
+    using Domain;
     using Domain.DTO;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    [Authorize]
+    [Authorize(Roles = Role.Admin)]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class UserController : ControllerBase

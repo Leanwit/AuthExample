@@ -11,7 +11,7 @@ namespace WebApi.Test.Domain
         [Theory]
         [InlineData(Role.Admin)]
         [InlineData(Role.PageOne)]
-        public void Set_Roles(Role role)
+        public void Set_Roles(string role)
         {
             var user = new User(UserSeed.Id, UserSeed.Username, UserSeed.Password);
             user.Roles.Add(role);
