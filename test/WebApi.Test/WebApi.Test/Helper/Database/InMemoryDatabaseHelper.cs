@@ -1,8 +1,7 @@
-namespace WebApi.Test.Database
+namespace WebApi.Test.Helper.Database
 {
     using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
-    using System.Threading.Tasks;
     using WebApi.Domain;
     using WebApi.Infrastructure.Persistence;
 

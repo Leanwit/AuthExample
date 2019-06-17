@@ -1,12 +1,11 @@
 namespace WebApi.Test.Controllers.Page
 {
-    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Net;
-    using System.Net.Http.Headers;
-    using System.Text;
     using System.Threading.Tasks;
+    using Helper.Controller;
+    using WebApi.Infrastructure.Persistence;
     using Xunit;
 
     public class PageControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>
@@ -16,8 +15,12 @@ namespace WebApi.Test.Controllers.Page
         private const string PageTwoUser = "pagetwo";
         private const string PageThreeUser = "pagethree";
         private const string Admin = "admin";
-        private readonly CustomWebApplicationFactory<Startup> _factory;
 
+        private const string PageOne = "/api/Page/PageOne";
+        private const string PageTwo = "/api/Page/PageTwo";
+        private const string PageThree = "/api/Page/PageThree";
+
+        private readonly CustomWebApplicationFactory<Startup> _factory;
 
         public PageControllerIntegrationTest(CustomWebApplicationFactory<Startup> factory)
         {
@@ -25,9 +28,9 @@ namespace WebApi.Test.Controllers.Page
         }
 
         [Theory]
-        [InlineData("/api/Page/Get/1")]
-        [InlineData("/api/Page/Get/2")]
-        [InlineData("/api/Page/Get/3")]
+        [InlineData(PageOne)]
+        [InlineData(PageTwo)]
+        [InlineData(PageThree)]
         public async Task Get_Endpoint_Should_Return_Unauthorized(string url)
         {
             // Arrange
@@ -46,7 +49,7 @@ namespace WebApi.Test.Controllers.Page
         {
             // Arrange
             var client = _factory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = CreateRoleAuthorizationHeader(user);
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(user);
 
             // Act
             var response = await client.GetAsync(page);
@@ -55,42 +58,33 @@ namespace WebApi.Test.Controllers.Page
             Assert.Equal(statusCode, response.StatusCode);
         }
 
-
-        private static AuthenticationHeaderValue CreateRoleAuthorizationHeader(string user)
-        {
-            return new AuthenticationHeaderValue(
-                "Basic", Convert.ToBase64String(
-                    Encoding.ASCII.GetBytes(
-                        $"{user}:{user}")));
-        }
-
         public class RoleTestData : IEnumerable<object[]>
         {
-            private const string PageOne = "/api/Page/Get/1";
-            private const string PageTwo = "/api/Page/Get/2";
-            private const string PageThree = "/api/Page/Get/3";
-
-
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] {PageOne, PageOneUser, HttpStatusCode.OK};
-                yield return new object[] {PageOne, PageTwoUser, HttpStatusCode.Forbidden};
-                yield return new object[] {PageOne, PageThreeUser, HttpStatusCode.Forbidden};
-                yield return new object[] {PageOne, NoRoleUser, HttpStatusCode.Forbidden};
-                yield return new object[] {PageOne, Admin, HttpStatusCode.OK};
+                yield return new object[] {PageOne, UserDataGenerator.PageOne, HttpStatusCode.OK};
+                yield return new object[] {PageOne, UserDataGenerator.PageTwo, HttpStatusCode.Forbidden};
+                yield return new object[] {PageOne, UserDataGenerator.PageThree, HttpStatusCode.Forbidden};
+                yield return new object[] {PageOne, UserDataGenerator.NoRole, HttpStatusCode.Forbidden};
+                yield return new object[] {PageOne, UserDataGenerator.Admin, HttpStatusCode.OK};
+                yield return new object[] {PageOne, UserDataGenerator.PageOneTwo, HttpStatusCode.OK};
+                yield return new object[] {PageOne, UserDataGenerator.PageThreeAdmin, HttpStatusCode.OK};
 
+                yield return new object[] {PageTwo, UserDataGenerator.PageOne, HttpStatusCode.Forbidden};
+                yield return new object[] {PageTwo, UserDataGenerator.PageTwo, HttpStatusCode.OK};
+                yield return new object[] {PageTwo, UserDataGenerator.PageThree, HttpStatusCode.Forbidden};
+                yield return new object[] {PageTwo, UserDataGenerator.NoRole, HttpStatusCode.Forbidden};
+                yield return new object[] {PageTwo, UserDataGenerator.Admin, HttpStatusCode.OK};
+                yield return new object[] {PageTwo, UserDataGenerator.PageOneTwo, HttpStatusCode.OK};
+                yield return new object[] {PageTwo, UserDataGenerator.PageThreeAdmin, HttpStatusCode.OK};
 
-                yield return new object[] {PageTwo, PageOneUser, HttpStatusCode.Forbidden};
-                yield return new object[] {PageTwo, PageTwoUser, HttpStatusCode.OK};
-                yield return new object[] {PageTwo, PageThreeUser, HttpStatusCode.Forbidden};
-                yield return new object[] {PageTwo, NoRoleUser, HttpStatusCode.Forbidden};
-                yield return new object[] {PageTwo, Admin, HttpStatusCode.OK};
-
-                yield return new object[] {PageThree, PageOneUser, HttpStatusCode.Forbidden};
-                yield return new object[] {PageThree, PageTwoUser, HttpStatusCode.Forbidden};
-                yield return new object[] {PageThree, PageThreeUser, HttpStatusCode.OK};
-                yield return new object[] {PageThree, NoRoleUser, HttpStatusCode.Forbidden};
-                yield return new object[] {PageTwo, Admin, HttpStatusCode.OK};
+                yield return new object[] {PageThree, UserDataGenerator.PageOne, HttpStatusCode.Forbidden};
+                yield return new object[] {PageThree, UserDataGenerator.PageTwo, HttpStatusCode.Forbidden};
+                yield return new object[] {PageThree, UserDataGenerator.PageThree, HttpStatusCode.OK};
+                yield return new object[] {PageThree, UserDataGenerator.NoRole, HttpStatusCode.Forbidden};
+                yield return new object[] {PageThree, UserDataGenerator.Admin, HttpStatusCode.OK};
+                yield return new object[] {PageThree, UserDataGenerator.PageOneTwo, HttpStatusCode.Forbidden};
+                yield return new object[] {PageThree, UserDataGenerator.PageThreeAdmin, HttpStatusCode.OK};
             }
 
             IEnumerator IEnumerable.GetEnumerator()

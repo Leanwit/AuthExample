@@ -1,4 +1,4 @@
-namespace WebApi.Test.Controllers
+namespace WebApi.Test.Helper.Controller
 {
     using AutoMapper;
     using Microsoft.AspNetCore.Hosting;

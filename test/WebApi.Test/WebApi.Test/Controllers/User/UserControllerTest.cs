@@ -4,8 +4,8 @@ namespace WebApi.Test.Controllers.User
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Database;
     using Helper;
+    using Helper.Database;
     using Microsoft.AspNetCore.Mvc;
     using WebApi.Application;
     using WebApi.Controllers;

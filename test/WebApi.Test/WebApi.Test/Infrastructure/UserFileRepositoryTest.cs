@@ -4,7 +4,7 @@ namespace WebApi.Test.Infrastructure
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Database;
+    using Helper.Database;
     using WebApi.Domain;
     using WebApi.Infrastructure.Persistence;
     using Xunit;

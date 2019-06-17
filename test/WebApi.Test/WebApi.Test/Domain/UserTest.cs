@@ -2,7 +2,7 @@ namespace WebApi.Test.Domain
 {
     using System.IO;
     using System.Linq;
-    using Database;
+    using Helper.Database;
     using WebApi.Domain;
     using Xunit;
 

@@ -1,11 +1,10 @@
 namespace WebApi.Test.Controllers.User
 {
-    using System;
     using System.Net;
-    using System.Net.Http.Headers;
-    using System.Text;
     using System.Threading.Tasks;
+    using Helper.Controller;
     using Microsoft.AspNetCore.Mvc.Testing;
+    using WebApi.Infrastructure.Persistence;
     using Xunit;
 
     public class UserControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>
@@ -42,7 +41,7 @@ namespace WebApi.Test.Controllers.User
             // Arrange
             var client = _factory.CreateClient();
 
-            client.DefaultRequestHeaders.Authorization = CreateValidAuthorizationHeader();
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
             // Act
             var response = await client.GetAsync(url);
 
@@ -57,7 +56,7 @@ namespace WebApi.Test.Controllers.User
         {
             // Arrange
             var client = _factory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = CreateValidAuthorizationHeader();
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
             client.DefaultRequestHeaders.Add(HttpRequestHeader.Accept.ToString(), contentType);
 
             // Act
@@ -74,7 +73,7 @@ namespace WebApi.Test.Controllers.User
         {
             // Arrange
             var client = _factory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = CreateValidAuthorizationHeader();
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
             client.DefaultRequestHeaders.Add(HttpRequestHeader.Accept.ToString(), contentType);
 
             // Act
@@ -92,7 +91,7 @@ namespace WebApi.Test.Controllers.User
         {
             // Arrange
             var client = _factory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = CreateNoAdminAuthorizationHeader();
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.PageOne);
 
             // Act
             var response = await client.GetAsync(url);
@@ -118,22 +117,6 @@ namespace WebApi.Test.Controllers.User
             response.EnsureSuccessStatusCode(); // Status Code 200-299
             Assert.Equal("text/html",
                 response.Content.Headers.ContentType.ToString());
-        }
-
-        private static AuthenticationHeaderValue CreateValidAuthorizationHeader()
-        {
-            return new AuthenticationHeaderValue(
-                "Basic", Convert.ToBase64String(
-                    Encoding.ASCII.GetBytes(
-                        "admin:admin")));
-        }
-
-        private static AuthenticationHeaderValue CreateNoAdminAuthorizationHeader()
-        {
-            return new AuthenticationHeaderValue(
-                "Basic", Convert.ToBase64String(
-                    Encoding.ASCII.GetBytes(
-                        "witzkito:asd2")));
         }
     }
 }

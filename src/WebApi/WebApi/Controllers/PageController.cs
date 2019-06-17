@@ -1,39 +1,36 @@
 namespace WebApi.Controllers
 {
-    using System;
-    using Domain;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    [Authorize(Roles = Role.Admin)]
     [Route("api/[controller]/[action]")]
     public class PageController : ControllerBase
     {
-        [HttpGet("Get/1")]
-        [Authorize(Roles = Role.PageOne)]
+        [HttpGet]
+        [Authorize(Roles = "PageOne,Admin")]
         [ProducesResponseType(201)]
         [ProducesResponseType(401)]
         public ActionResult PageOne()
         {
-            throw new NotImplementedException();
+            return Ok();
         }
 
-        [HttpGet("Get/2")]
-        [Authorize(Roles = Role.PageTwo)]
+        [HttpGet]
+        [Authorize(Roles = "PageTwo,Admin")]
         [ProducesResponseType(201)]
         [ProducesResponseType(401)]
         public ActionResult PageTwo()
         {
-            throw new NotImplementedException();
+            return Ok();
         }
 
-        [HttpGet("Get/3")]
-        [Authorize(Roles = Role.PageThree)]
+        [HttpGet]
+        [Authorize(Roles = "PageThree,Admin")]
         [ProducesResponseType(201)]
         [ProducesResponseType(401)]
         public ActionResult PageThree()
         {
-            throw new NotImplementedException();
+            return Ok();
         }
     }
 }

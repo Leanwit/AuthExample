@@ -3,8 +3,8 @@ namespace WebApi.Test.Application
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Database;
     using Helper;
+    using Helper.Database;
     using Microsoft.EntityFrameworkCore;
     using WebApi.Application;
     using WebApi.Domain;
