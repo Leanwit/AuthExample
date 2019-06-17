@@ -24,6 +24,21 @@ namespace WebApi.Infrastructure.Persistence
                 user.Roles = new List<string> {Role.PageOne, Role.PageTwo};
                 context.User.Add(user);
 
+                user = new User(Guid.NewGuid().ToString(), "pageone", "pageone");
+                user.Roles = new List<string> {Role.PageOne};
+                context.User.Add(user);
+
+                user = new User(Guid.NewGuid().ToString(), "pagetwo", "pagetwo");
+                user.Roles = new List<string> {Role.PageTwo};
+                context.User.Add(user);
+
+                user = new User(Guid.NewGuid().ToString(), "pagethree", "pagethree");
+                user.Roles = new List<string> {Role.PageThree};
+                context.User.Add(user);
+
+                user = new User(Guid.NewGuid().ToString(), "norole", "norole");
+                user.Roles = new List<string>();
+                context.User.Add(user);
                 context.SaveChanges();
             }
         }

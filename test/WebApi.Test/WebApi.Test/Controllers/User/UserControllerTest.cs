@@ -1,4 +1,4 @@
-namespace WebApi.Test.Controllers
+namespace WebApi.Test.Controllers.User
 {
     using System;
     using System.Collections.Generic;
