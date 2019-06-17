@@ -24,7 +24,7 @@ namespace WebApi.Application
 
         public async Task<UserDto> Authenticate(string username, string password)
         {
-            var user = (await _userRepository.Get(x => x.Username.Equals(username))).FirstOrDefault();
+            var user = (await _userRepository.Get(x => x.Username.Equals(username) && x.IsPassword(password))).FirstOrDefault();
 
             // return null if user not found
             if (user == null || !user.IsPassword(password))
