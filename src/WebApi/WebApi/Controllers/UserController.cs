@@ -118,8 +118,9 @@ namespace WebApi.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<ActionResult<UserDto>> Put([FromBody] UserDto entitu)
         {
+            throw new NotImplementedException();
         }
 
         // DELETE api/User/
@@ -134,7 +135,6 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
-            //todo Use only delete
             var user = await _userFind.GetById(id);
 
             if (user == null) return NotFound("User not found");

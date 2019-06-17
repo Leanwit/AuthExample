@@ -272,5 +272,65 @@ namespace WebApi.Test.Controllers
                 Assert.True(user.Password == userGenerated.Password);
             }
         }
+
+        [Fact]
+        public async Task Put_Create_Not_Existing_User()
+        {
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(Put_Create_Not_Existing_User)))
+            {
+                InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
+            }
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(Put_Create_Not_Existing_User)))
+            {
+                var controller = GetControllerInstance(context);
+                var dto = new UserDto
+                {
+                    Id = UserSeed.Id,
+                    Username = UserSeed.Username,
+                    Password = UserSeed.Password
+                };
+
+                var response = await controller.Put(dto);
+                Assert.IsType<NotFoundObjectResult>(response.Result);
+                Assert.Null(context.User.FirstOrDefault(u => u.Id == UserSeed.Id));
+            }
+        }
+
+        [Fact]
+        public async Task Put_Create_User_Success()
+        {
+            var userGenerated = UserSeed.CreateUserTest();
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(Put_Create_Not_Existing_User)))
+            {
+                InMemoryDatabaseHelper.Save(new List<User> {userGenerated}, context);
+            }
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(Post_Create_User_Success)))
+            {
+                var controller = GetControllerInstance(context);
+                var dto = new UserDto
+                {
+                    Id = userGenerated.Id,
+                    Username = UserSeed.Username,
+                    Password = UserSeed.Password
+                };
+
+                var result = await controller.Post(dto);
+                var dtoSuccess = result.Value;
+
+                Assert.IsType<ActionResult<UserDto>>(result);
+                Assert.IsType<UserDto>(dtoSuccess);
+            }
+
+            using (var context = InMemoryDatabaseHelper.CreateContext(nameof(Post_Create_User_Success)))
+            {
+                var user = context.User.FirstOrDefault(u => u.Id == userGenerated.Id);
+                Assert.NotNull(user);
+                Assert.True(user.Username == UserSeed.Username);
+                Assert.True(user.Password == UserSeed.Password);
+            }
+        }
     }
 }
