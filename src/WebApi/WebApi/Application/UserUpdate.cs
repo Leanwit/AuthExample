@@ -6,24 +6,25 @@ namespace WebApi.Application
     using Domain;
     using Domain.DTO;
 
-    public interface IUserCreate<T>
+    public interface IUserUpdate<T>
     {
-        Task<T> Execute(T user);
+        Task<T> Execute(T t);
     }
 
-    public class UserCreate : UserService, IUserCreate<UserDto>
+
+    public class UserUpdate : UserService, IUserUpdate<UserDto>
     {
-        public UserCreate(IUserRepository userRepository, IMapper mapper) : base(userRepository, mapper)
+        public UserUpdate(IUserRepository userRepository, IMapper mapper) : base(userRepository, mapper)
         {
         }
 
         public async Task<UserDto> Execute(UserDto userDto)
         {
-            var userToCreate = _mapper.Map<User>(userDto);
+            var userToUpdate = _mapper.Map<User>(userDto);
 
             try
             {
-                var user = await _userRepository.Add(userToCreate);
+                var user = await _userRepository.Update(userToUpdate);
                 return _mapper.Map<UserDto>(user);
             }
             catch (InvalidOperationException inv)

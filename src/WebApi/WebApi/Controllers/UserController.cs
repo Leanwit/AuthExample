@@ -16,14 +16,15 @@ namespace WebApi.Controllers
         private readonly IUserCreate<UserDto> _userCreate;
         private readonly IUserDelete<UserDto> _userDelete;
         private readonly IUserFind<UserFindDto> _userFind;
+        private readonly IUserUpdate<UserDto> _userUpdate;
 
-
-        public UserController(IUserFind<UserFindDto> userFind, IUserDelete<UserDto> userDelete,
-            IUserCreate<UserDto> userCreate)
+        public UserController(IUserFind<UserFindDto> userFind, IUserCreate<UserDto> userCreate, IUserDelete<UserDto> userDelete,
+            IUserUpdate<UserDto> userUpdate)
         {
             _userFind = userFind;
-            _userDelete = userDelete;
             _userCreate = userCreate;
+            _userDelete = userDelete;
+            _userUpdate = userUpdate;
         }
 
         // GET api/User/GetAll
@@ -118,9 +119,17 @@ namespace WebApi.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<UserDto>> Put([FromBody] UserDto entitu)
+        public async Task<ActionResult<UserDto>> Put([FromBody] UserDto entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userUpdate.Execute(entity);
+                return Ok(user);
+            }
+            catch (Exception e)
+            {
+                return Conflict(e.Message);
+            }
         }
 
         // DELETE api/User/
@@ -141,7 +150,7 @@ namespace WebApi.Controllers
 
             try
             {
-                await _userDelete.Execute(user.Id);
+                await _userDelete.Execute(new UserDto {Id = id});
                 return Ok();
             }
             catch (Exception e)

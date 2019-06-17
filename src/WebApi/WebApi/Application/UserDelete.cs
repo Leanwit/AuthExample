@@ -6,18 +6,22 @@ namespace WebApi.Application
     using Domain;
     using Domain.DTO;
 
+    public interface IUserDelete<T>
+    {
+        Task<T> Execute(T id);
+    }
+
     public class UserDelete : UserService, IUserDelete<UserDto>
     {
         public UserDelete(IUserRepository userRepository, IMapper mapper) : base(userRepository, mapper)
         {
         }
 
-        public async Task<bool> Execute(string id)
+        public async Task<UserDto> Execute(UserDto userDto)
         {
             try
             {
-                await _userRepository.Delete(id);
-                return true;
+                return _mapper.Map<UserDto>(await _userRepository.Delete(userDto.Id));
             }
             catch (Exception e)
             {

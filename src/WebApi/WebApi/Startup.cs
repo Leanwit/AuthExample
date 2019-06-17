@@ -48,6 +48,7 @@
             services.AddScoped<IUserFind<UserFindDto>, UserFind>();
             services.AddScoped<IUserDelete<UserDto>, UserDelete>();
             services.AddScoped<IUserCreate<UserDto>, UserCreate>();
+            services.AddScoped<IUserUpdate<UserDto>, UserUpdate>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

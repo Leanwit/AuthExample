@@ -23,7 +23,9 @@ namespace WebApi.Test.Controllers
             var userFinder = new UserFind(repository, mapper);
             var userDelete = new UserDelete(repository, mapper);
             var userCreate = new UserCreate(repository, mapper);
-            return new UserController(userFinder, userDelete, userCreate);
+            var userUpdate = new UserUpdate(repository, mapper);
+
+            return new UserController(userFinder, userCreate, userDelete, userUpdate);
         }
 
         [Theory]
@@ -292,7 +294,7 @@ namespace WebApi.Test.Controllers
                 };
 
                 var response = await controller.Put(dto);
-                Assert.IsType<NotFoundObjectResult>(response.Result);
+                Assert.IsType<ConflictObjectResult>(response.Result);
                 Assert.Null(context.User.FirstOrDefault(u => u.Id == UserSeed.Id));
             }
         }

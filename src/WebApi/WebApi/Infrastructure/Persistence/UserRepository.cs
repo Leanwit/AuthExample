@@ -74,7 +74,7 @@
             return entity;
         }
 
-        public async Task Delete(string id)
+        public async Task<User> Delete(string id)
         {
             try
             {
@@ -84,6 +84,8 @@
                 //this.UserDbContext.Entry(entity).State = EntityState.Deleted;
                 UserDbContext.User.Remove(user);
                 await UserDbContext.SaveChangesAsync();
+
+                return user;
             }
             catch (Exception e)
             {
