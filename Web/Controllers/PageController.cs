@@ -1,11 +1,11 @@
 namespace Web.Controllers
 {
-    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using Services.Filters;
 
     public class PageController : Controller
     {
-        private async Task<IActionResult> ExecutePage(string pageTitle)
+        private IActionResult ExecutePage(string pageTitle)
         {
             ViewBag.PageTitle = pageTitle;
             ViewBag.Logged = true;
@@ -13,21 +13,21 @@ namespace Web.Controllers
         }
 
         [RoleAuthenticateFilter(Page = nameof(PageOne))]
-        public async Task<IActionResult> PageOne()
+        public IActionResult PageOne()
         {
-            return await ExecutePage(nameof(PageOne));
+            return ExecutePage(nameof(PageOne));
         }
 
         [RoleAuthenticateFilter(Page = nameof(PageTwo))]
-        public async Task<IActionResult> PageTwo()
+        public IActionResult PageTwo()
         {
-            return await ExecutePage(nameof(PageTwo));
+            return ExecutePage(nameof(PageTwo));
         }
 
         [RoleAuthenticateFilter(Page = nameof(PageThree))]
-        public async Task<IActionResult> PageThree()
+        public IActionResult PageThree()
         {
-            return await ExecutePage(nameof(PageThree));
+            return ExecutePage(nameof(PageThree));
         }
     }
 }
