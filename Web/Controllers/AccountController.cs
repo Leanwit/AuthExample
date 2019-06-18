@@ -16,7 +16,7 @@ namespace Web.Controllers
     [Route("account")]
     public class AccountController : Controller
     {
-        private static readonly HttpClient client = new HttpClient();
+        private static readonly HttpClient _client = new HttpClient();
         private static readonly MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
         private readonly WebApiSettings _webApiSettings;
 
@@ -46,7 +46,7 @@ namespace Web.Controllers
                     {"password", password}
                 };
 
-                var response = await client.PostAsync(new Uri(_webApiSettings.AuthenticateUrl),
+                var response = await _client.PostAsync(new Uri(_webApiSettings.AuthenticateUrl),
                     new StringContent(JsonConvert.SerializeObject(values), Encoding.UTF8, "application/json"));
 
                 if (response.StatusCode == HttpStatusCode.OK)
