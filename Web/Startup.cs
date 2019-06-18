@@ -1,11 +1,14 @@
 ﻿namespace Web
 {
     using System;
+    using System.IO;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Services;
+    using Utils;
 
     public class Startup
     {
@@ -28,6 +31,15 @@
                 options.Cookie.IsEssential = true;
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            var configBuilder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true);
+            var config = configBuilder.Build();
+
+            services.Configure<WebApiSettings>(config.GetSection("WebApi"));
+
+            services.AddScoped<RoleAuthenticateService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -45,6 +57,7 @@
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSession();
+            app.UseStatusCodePages();
             app.UseCookiePolicy();
 
             app.UseMvc(routes =>

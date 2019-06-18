@@ -31,26 +31,31 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
+                    @if (ViewBag.Logged != null && ViewBag.Logged == true)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Page" asp-action="PageOne">To Page 1</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Page" asp-action="PageTwo">To Page 2</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Page" asp-action="PageThree">To Page 3</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="account" asp-action="logout">Logout</a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
     </nav>
 </header>
 <div class="container">
-    <partial name="_CookieConsentPartial"/>
     <main role="main" class="pb-3">
         @RenderBody()
     </main>
 </div>
-
-<footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2019 - Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
-</footer>
 
 <environment include="Development">
     <script src="~/lib/jquery/dist/jquery.js"></script>
@@ -71,7 +76,6 @@
         </script>
 </environment>
 <script src="~/js/site.js" asp-append-version="true"></script>
-
 @RenderSection("Scripts", false)
 </body>
 </html>

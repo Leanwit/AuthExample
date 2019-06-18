@@ -1,12 +1,12 @@
-﻿@{
-    ViewData["Title"] = "Error";
-    ViewBag.Logged = true;
+@using Microsoft.AspNetCore.Http
+@model object
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
 }
 
-<div class="alert alert-danger" role="alert">
-    <h3>Access denied.</h3>
-    <p>You dont have permission for this page</p>
-</div>
+<h2>Welcome @Context.Session.GetString("username") to @ViewBag.PageTitle</h2>
 <button class="btn btn-primary" id="EndUserSession">End User Session</button>
 
 @section Scripts {
