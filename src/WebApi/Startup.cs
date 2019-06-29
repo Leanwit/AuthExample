@@ -35,10 +35,10 @@
             }).AddXmlSerializerFormatters().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<UserDbContext>(options => options.UseInMemoryDatabase("Users"));
 
-            services.ConfigureSwagger();
-
             services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+            
+            services.ConfigureSwagger();
 
             /* Repository dependencies injection*/
             services.AddScoped<IUserRepository, UserRepository>();
