@@ -1,0 +1,21 @@
+@using Microsoft.AspNetCore.Http
+@model object
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Welcome @Context.Session.GetString("username") to @ViewBag.PageTitle</h2>
+<button class="btn btn-primary" id="EndUserSession">End User Session</button>
+
+@section Scripts {
+    <script type="text/javascript">   
+  $( document ).ready(function() {
+      $("#EndUserSession").on("click", function(){
+          console.log("Executed");
+          $.get("/account/EndUserSession");
+      })
+  });
+</script>
+}
