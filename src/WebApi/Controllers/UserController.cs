@@ -127,9 +127,11 @@ namespace WebApi.Controllers
         /// <response code="400">Incorrect parameters</response>
         /// <response code="401">Not authorized</response>
         /// <response code="409">Conflict</response>
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<ActionResult<UserDto>> Put([FromBody] UserDto entity)
         {
+            if (entity != null && string.IsNullOrWhiteSpace(entity.Id)) return BadRequest("Id null or Empty");
+            
             try
             {
                 var user = await _userUpdate.Execute(entity);

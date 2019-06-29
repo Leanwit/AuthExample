@@ -10,12 +10,6 @@ namespace WebApi.Test.Controllers.Page
 
     public class PageControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private const string NoRoleUser = "norole";
-        private const string PageOneUser = "pageone";
-        private const string PageTwoUser = "pagetwo";
-        private const string PageThreeUser = "pagethree";
-        private const string Admin = "admin";
-
         private const string PageOne = "/api/Page/PageOne";
         private const string PageTwo = "/api/Page/PageTwo";
         private const string PageThree = "/api/Page/PageThree";

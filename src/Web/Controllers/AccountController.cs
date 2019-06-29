@@ -38,7 +38,7 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password, string returnUrl)
         {
-            if (username != null && password != null)
+            if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
             {
                 var values = new Dictionary<string, string>
                 {
