@@ -8,7 +8,8 @@ namespace WebApi.Infrastructure.Mapper
     {
         public UserProfile()
         {
-            CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<User, UserDto>().ForMember(u => u.Password, opt => opt.Ignore());
+            CreateMap<UserDto, User>();
             CreateMap<User, UserFindDto>().ReverseMap();
             CreateMap<UserDto, UserFindDto>().ReverseMap();
         }
