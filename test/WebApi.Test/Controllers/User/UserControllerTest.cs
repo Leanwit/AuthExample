@@ -294,7 +294,7 @@ namespace WebApi.Test.Controllers.User
                 };
 
                 var response = await controller.Put(dto);
-                Assert.IsType<ConflictObjectResult>(response.Result);
+                Assert.IsType<BadRequestObjectResult>(response.Result);
                 Assert.Null(context.User.FirstOrDefault(u => u.Id == UserSeed.Id));
             }
         }

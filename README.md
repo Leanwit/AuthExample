@@ -24,7 +24,7 @@ WebApi run in https://localhost:5001 as default.
 ```
 dotnet run --project src/Web/Web.csproj
 ```
-Web run in https://localhost:1001 as default.
+Web run in https://localhost:1000 as default.
 
 For login purpose, you can see all users and password created as default in [_src/WebApi/Infrastructure/Persistence/Seed/UserDataGenerator.cs_](https://github.com/Leanwit/AuthExample/blob/master/src/WebApi/Infrastructure/Persistence/Seed/UserDataGenerator.cs)
 

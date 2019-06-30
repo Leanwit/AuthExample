@@ -114,7 +114,7 @@ namespace WebApi.Controllers
                 var user = await _userCreate.Execute(dto);
                 return user;
             }
-            catch (InvalidOperationException e)
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
@@ -141,7 +141,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-                return Conflict(e.Message);
+                return BadRequest(e.Message);
             }
         }
 

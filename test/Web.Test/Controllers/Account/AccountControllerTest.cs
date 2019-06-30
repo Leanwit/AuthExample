@@ -85,9 +85,6 @@ namespace Web.Test.Controllers.Account
 
             "Then the result is a ViewResult"
                 .x(() => viewResult = Assert.IsType<ViewResult>(result));
-
-            "And the view is Index"
-                .x(() => Assert.Equal("Index", viewResult.ViewName));
         }
 
 
@@ -117,7 +114,7 @@ namespace Web.Test.Controllers.Account
 
 
         [Scenario]
-        public void Logout_Redirect_To_Index(AccountController controller, IActionResult result, ViewResult viewResult)
+        public void Logout_Redirect_To_Index(AccountController controller, IActionResult result)
         {
             "Given the account controller"
                 .x(() => controller = CreateAccountControllerWithContext());
@@ -125,11 +122,8 @@ namespace Web.Test.Controllers.Account
             "When I end the user session"
                 .x(() => result = controller.Logout());
 
-            "Then the result is a ViewResult"
-                .x(() => viewResult = Assert.IsType<ViewResult>(result));
-
-            "And the view is Index"
-                .x(() => Assert.Equal("Index", viewResult.ViewName));
+            "Then the result is a redirect to action"
+                .x(() => Assert.IsType<RedirectToActionResult>(result));
         }
 
         private AccountController CreateAccountController()

@@ -214,7 +214,7 @@ namespace WebApi.Test.Controllers.User
                 new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json"));
 
             // Assert
-            Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Theory]
