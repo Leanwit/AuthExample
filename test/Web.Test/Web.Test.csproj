@@ -16,7 +16,12 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\Web\Web.csproj" />
-      <ProjectReference Include="..\WebApi.Test\WebApi.Test.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="Xbehave.Core, Version=2.4.0.0, Culture=neutral, PublicKeyToken=e4957f48888f9fe8">
+            <HintPath>..\..\..\..\..\..\.nuget\packages\xbehave.core\2.4.0\lib\netstandard1.1\Xbehave.Core.dll</HintPath>
+        </Reference>
     </ItemGroup> 
 
 </Project>

@@ -7,12 +7,10 @@ namespace WebApi.Test.Controllers.User
     using System.Threading.Tasks;
     using Helper.Controller;
     using Helper.Database;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Testing;
     using Newtonsoft.Json;
-    using WebApi.Domain;
     using WebApi.Domain.DTO;
-    using WebApi.Infrastructure.Persistence;
+    using WebApi.Infrastructure.Persistence.Seed;
     using Xunit;
 
     public class UserControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>
@@ -169,7 +167,7 @@ namespace WebApi.Test.Controllers.User
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
 
-            var userDto = new UserDto()
+            var userDto = new UserDto
             {
                 Username = UserSeed.Username,
                 Password = UserSeed.Password,
@@ -207,7 +205,7 @@ namespace WebApi.Test.Controllers.User
             // Arrange
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
-            
+
             var userDto = new UserDto();
             userDto.Id = Guid.NewGuid().ToString();
 
@@ -227,7 +225,7 @@ namespace WebApi.Test.Controllers.User
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
 
-            var userDto = new UserDto()
+            var userDto = new UserDto
             {
                 Username = UserSeed.Username,
                 Password = UserSeed.Password,
@@ -241,7 +239,7 @@ namespace WebApi.Test.Controllers.User
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
-        
+
         [Theory]
         [InlineData("/api/User/Delete/id")]
         public async Task Delete_No_Admin_Forbidden(string url)
@@ -264,7 +262,7 @@ namespace WebApi.Test.Controllers.User
             // Arrange
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
-            
+
             // Act
             var response = await client.DeleteAsync(url);
 

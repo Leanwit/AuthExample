@@ -5,7 +5,7 @@ namespace WebApi.Test.Controllers.Page
     using System.Net;
     using System.Threading.Tasks;
     using Helper.Controller;
-    using WebApi.Infrastructure.Persistence;
+    using WebApi.Infrastructure.Persistence.Seed;
     using Xunit;
 
     public class PageControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>

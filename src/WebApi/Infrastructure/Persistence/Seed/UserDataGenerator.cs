@@ -1,4 +1,4 @@
-namespace WebApi.Infrastructure.Persistence
+namespace WebApi.Infrastructure.Persistence.Seed
 {
     using System;
     using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace WebApi.Infrastructure.Persistence
             {
                 if (context.User.Any()) return;
 
-                var user = new User( GuidAdmin, Admin, Admin);
+                var user = new User(GuidAdmin, Admin, Admin);
                 user.Roles = new List<string> {Role.Admin};
                 context.User.Add(user);
 

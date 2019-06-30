@@ -7,7 +7,7 @@ namespace WebApi.Test.Controllers.Account
     using Helper.Controller;
     using Newtonsoft.Json;
     using WebApi.Domain.DTO;
-    using WebApi.Infrastructure.Persistence;
+    using WebApi.Infrastructure.Persistence.Seed;
     using Xunit;
 
     public class AccountControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>

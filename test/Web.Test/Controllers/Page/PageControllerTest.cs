@@ -2,53 +2,54 @@ namespace Web.Test.Controllers.Page
 {
     using Microsoft.AspNetCore.Mvc;
     using Web.Controllers;
+    using Xbehave;
     using Xunit;
 
     public class PageControllerTest
     {
-        [Fact]
-        public void PageOne_Return_Correct_Page()
+        [Scenario]
+        public void PageOne_Return_Correct_Page(PageController controller, IActionResult result, ViewResult viewResult)
         {
-            //Arrange
-            var controller = new PageController();
-
-            //Act
-            var result = controller.PageOne();
-
-            //Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewData.ContainsKey("PageTitle"));
-            Assert.True(viewResult.ViewData.Values.Contains("PageOne"));
+            "Given the page controller"
+                .x(() => controller = new PageController());
+            "When I execute a page one"
+                .x(() => result = controller.PageOne());
+            "Then the result is a View Result"
+                .x(() => viewResult = Assert.IsType<ViewResult>(result));
+            "And the page has view witch contain a PageTitle"
+                .x(() => Assert.True(viewResult.ViewData.ContainsKey("PageTitle")));
+            "And the page has PageOne as a title"
+                .x(() => Assert.True(viewResult.ViewData.Values.Contains("PageOne")));
         }
 
-        [Fact]
-        public void PageThree_Return_Correct_Page()
+        [Scenario]
+        public void PageTwo_Return_Correct_Page(PageController controller, IActionResult result, ViewResult viewResult)
         {
-            //Arrange
-            var controller = new PageController();
-
-            //Act
-            var result = controller.PageThree();
-
-            //Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewData.ContainsKey("PageTitle"));
-            Assert.True(viewResult.ViewData.Values.Contains("PageThree"));
+            "Given the page controller"
+                .x(() => controller = new PageController());
+            "When I execute a page one"
+                .x(() => result = controller.PageTwo());
+            "Then the result is a View Result"
+                .x(() => viewResult = Assert.IsType<ViewResult>(result));
+            "And the page has view witch contain a PageTitle"
+                .x(() => Assert.True(viewResult.ViewData.ContainsKey("PageTitle")));
+            "And the page has PageOne as a title"
+                .x(() => Assert.True(viewResult.ViewData.Values.Contains("PageTwo")));
         }
 
-        [Fact]
-        public void PageTwo_Return_Correct_Page()
+        [Scenario]
+        public void PageThree_Return_Correct_Page(PageController controller, IActionResult result, ViewResult viewResult)
         {
-            //Arrange
-            var controller = new PageController();
-
-            //Act
-            var result = controller.PageTwo();
-
-            //Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewData.ContainsKey("PageTitle"));
-            Assert.True(viewResult.ViewData.Values.Contains("PageTwo"));
+            "Given the page controller"
+                .x(() => controller = new PageController());
+            "When I execute a page one"
+                .x(() => result = controller.PageThree());
+            "Then the result is a View Result"
+                .x(() => viewResult = Assert.IsType<ViewResult>(result));
+            "And the page has view witch contain a PageTitle"
+                .x(() => Assert.True(viewResult.ViewData.ContainsKey("PageTitle")));
+            "And the page has PageOne as a title"
+                .x(() => Assert.True(viewResult.ViewData.Values.Contains("PageThree")));
         }
     }
 }

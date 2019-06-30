@@ -2,21 +2,22 @@ namespace Web.Test.Controllers.Home
 {
     using Microsoft.AspNetCore.Mvc;
     using Web.Controllers;
+    using Xbehave;
     using Xunit;
 
     public class HomeControllerTest
     {
-        [Fact]
-        public void Index_Should_Return_Page()
+        [Scenario]
+        public void Index_Should_Return_Page(HomeController controller, IActionResult result)
         {
-            //Arrange
-            var homeController = new HomeController();
+            "Given the home controller"
+                .x(() => controller = new HomeController());
 
-            //Act
-            var result = homeController.Index();
+            "When I executed a Index"
+                .x(() => result = controller.Index());
 
-            //Assert
-            Assert.IsType<ViewResult>(result);
+            "Then the result is a View Result"
+                .x(() => Assert.IsType<ViewResult>(result));
         }
     }
 }

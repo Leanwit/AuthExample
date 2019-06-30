@@ -1,100 +1,152 @@
 namespace Web.Test.Controllers.Account
 {
-    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Options;
     using Moq;
     using Web.Controllers;
     using Web.Utils;
+    using Xbehave;
     using Xunit;
 
     public class AccountControllerTest
     {
-        [Theory]
-        [InlineData("user", "")]
-        [InlineData("", "pass")]
-        public async Task Login_Invalid_Credentials(string user, string password)
+        [Scenario]
+        public void Login_Invalid_Credentials_password(AccountController controller, IActionResult result, ViewResult viewResult)
         {
-            //Arrange
-            var ioSettings = new Mock<IOptions<WebApiSettings>>();
-            var accountController = new AccountController(ioSettings.Object);
+            "Given the account controller"
+                .x(() => controller = CreateAccountController());
 
-            //Act
-            var result = await accountController.Login(user, password, string.Empty);
+            "When I login without password value"
+                .x(async () => result = await controller.Login("user", string.Empty, string.Empty));
 
-            //Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.Equal("index", viewResult.ViewName);
-            Assert.True(viewResult.ViewData.ContainsKey("error"));
-            Assert.True(viewResult.ViewData.Values.Contains("Invalid Credentials"));
+            "Then the result is a ViewResult"
+                .x(() => viewResult = Assert.IsType<ViewResult>(result));
+
+            "And the view is index"
+                .x(() => Assert.Equal("index", viewResult.ViewName));
+
+            "And view data have invalid credentials message"
+                .x(() =>
+                {
+                    Assert.True(viewResult.ViewData.ContainsKey("error"));
+                    Assert.True(viewResult.ViewData.Values.Contains("Invalid Credentials"));
+                });
         }
 
-        [Fact]
-        public void Access_Denied_Return_View()
+        [Scenario]
+        public void Login_Invalid_Credentials_username(AccountController controller, IActionResult result, ViewResult viewResult)
         {
-            //Arrange
-            var ioSettings = new Mock<IOptions<WebApiSettings>>();
-            var accountController = new AccountController(ioSettings.Object);
+            "Given the account controller"
+                .x(() => controller = CreateAccountController());
 
-            //Act
-            var result = accountController.AccessDenied();
+            "When I login without password value"
+                .x(async () => result = await controller.Login(string.Empty, "password", string.Empty));
 
-            //Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.Equal("AccessDenied", viewResult.ViewName);
+            "Then the result is a ViewResult"
+                .x(() => viewResult = Assert.IsType<ViewResult>(result));
+
+            "And the view is index"
+                .x(() => Assert.Equal("index", viewResult.ViewName));
+
+            "And view data have invalid credentials message"
+                .x(() =>
+                {
+                    Assert.True(viewResult.ViewData.ContainsKey("error"));
+                    Assert.True(viewResult.ViewData.Values.Contains("Invalid Credentials"));
+                });
         }
 
-        [Fact]
-        public void EndUserSession_Execute()
+
+        [Scenario]
+        public void Access_Denied_Return_View(AccountController controller, IActionResult result, ViewResult viewResult)
         {
-            //Arrange
+            "Given the account controller"
+                .x(() => controller = CreateAccountController());
+
+            "When I enter to access denied"
+                .x(() => result = controller.AccessDenied());
+
+            "Then the result is a ViewResult"
+                .x(() => viewResult = Assert.IsType<ViewResult>(result));
+
+            "And the view is AccessDenied"
+                .x(() => Assert.Equal("AccessDenied", viewResult.ViewName));
+        }
+
+        [Scenario]
+        public void Index_Should_Return_Page(AccountController controller, IActionResult result, ViewResult viewResult)
+        {
+            "Given the account controller"
+                .x(() => controller = CreateAccountController());
+
+            "When I enter to access denied"
+                .x(() => result = controller.Index(string.Empty));
+
+            "Then the result is a ViewResult"
+                .x(() => viewResult = Assert.IsType<ViewResult>(result));
+
+            "And the view is Index"
+                .x(() => Assert.Equal("Index", viewResult.ViewName));
+        }
+
+
+        [Scenario]
+        public void EndUserSession_Execute(AccountController controller)
+        {
+            "Given the account controller"
+                .x(() => controller = CreateAccountControllerWithContext());
+
+            "When I end the user session"
+                .x(() => controller.EndUserSession());
+
+            "Then username is null"
+                .x(() =>
+                {
+                    controller.ControllerContext.HttpContext.Session.TryGetValue("username", out var username);
+                    Assert.Null(username);
+                });
+
+            "And password is null"
+                .x(() =>
+                {
+                    controller.ControllerContext.HttpContext.Session.TryGetValue("username", out var password);
+                    Assert.Null(password);
+                });
+        }
+
+
+        [Scenario]
+        public void Logout_Redirect_To_Index(AccountController controller, IActionResult result, ViewResult viewResult)
+        {
+            "Given the account controller"
+                .x(() => controller = CreateAccountControllerWithContext());
+
+            "When I end the user session"
+                .x(() => result = controller.Logout());
+
+            "Then the result is a ViewResult"
+                .x(() => viewResult = Assert.IsType<ViewResult>(result));
+
+            "And the view is Index"
+                .x(() => Assert.Equal("Index", viewResult.ViewName));
+        }
+
+        private AccountController CreateAccountController()
+        {
+            var ioSettings = new Mock<IOptions<WebApiSettings>>();
+            return new AccountController(ioSettings.Object);
+        }
+
+        private AccountController CreateAccountControllerWithContext()
+        {
             var ioSettings = new Mock<IOptions<WebApiSettings>>();
             var accountController = new AccountController(ioSettings.Object);
             accountController.ControllerContext = new ControllerContext();
             accountController.ControllerContext.HttpContext = new DefaultHttpContext();
             accountController.ControllerContext.HttpContext.Session = new Mock<ISession>().Object;
 
-            //Act
-            accountController.EndUserSession();
-            accountController.ControllerContext.HttpContext.Session.TryGetValue("username", out var username);
-            accountController.ControllerContext.HttpContext.Session.TryGetValue("password", out var password);
-
-            //Assert
-            Assert.Null(username);
-            Assert.Null(password);
-        }
-
-        [Fact]
-        public void Index_Should_Return_Page()
-        {
-            //Arrange
-            var ioSettings = new Mock<IOptions<WebApiSettings>>();
-            var accountController = new AccountController(ioSettings.Object);
-
-            //Act
-            var result = accountController.Index(string.Empty);
-
-            //Assert
-            Assert.IsType<ViewResult>(result);
-        }
-
-        [Fact]
-        public void Logout_Redirect_To_Index()
-        {
-            //Arrange
-            var ioSettings = new Mock<IOptions<WebApiSettings>>();
-            var accountController = new AccountController(ioSettings.Object);
-            accountController.ControllerContext = new ControllerContext();
-            accountController.ControllerContext.HttpContext = new DefaultHttpContext();
-            accountController.ControllerContext.HttpContext.Session = new Mock<ISession>().Object;
-
-            //Act
-            var result = accountController.Logout();
-
-            //Assert
-            var viewResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("Index", viewResult.ActionName);
+            return accountController;
         }
     }
 }
