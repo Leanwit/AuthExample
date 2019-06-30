@@ -1,4 +1,4 @@
-namespace WebApi.Infrastructure.Persistence
+namespace WebApi.Infrastructure.Persistence.Seed
 {
     using System;
     using System.Collections.Generic;
@@ -17,6 +17,8 @@ namespace WebApi.Infrastructure.Persistence
         public const string PageOneTwo = "pageonetwo";
         public const string PageThreeAdmin = "pagethreeadmin";
 
+        public const string GuidAdmin = "11e93406-b12c-4ebd-8820-e5201d6f2fa5";
+        public const string GuidUserPageOne = "11e93406-b12c-4ebd-8820-e5201d6f2fa6";
 
         public static void Initialize(IServiceProvider serviceProvider)
         {
@@ -25,11 +27,11 @@ namespace WebApi.Infrastructure.Persistence
             {
                 if (context.User.Any()) return;
 
-                var user = new User("fbb27b43-179b-4898-b9af-cdda8ef4a503", Admin, Admin);
+                var user = new User(GuidAdmin, Admin, Admin);
                 user.Roles = new List<string> {Role.Admin};
                 context.User.Add(user);
 
-                user = new User(Guid.NewGuid().ToString(), PageOne, PageOne);
+                user = new User(GuidUserPageOne, PageOne, PageOne);
                 user.Roles = new List<string> {Role.PageOne};
                 context.User.Add(user);
 

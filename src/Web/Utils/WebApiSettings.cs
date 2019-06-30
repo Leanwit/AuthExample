@@ -2,8 +2,8 @@ namespace Web.Utils
 {
     public class WebApiSettings
     {
-        public string _authenticateUrl;
-        public string _pageUrl;
+        private string _authenticateUrl;
+        private string _pageUrl;
         public string BaseUrl { get; set; }
 
 

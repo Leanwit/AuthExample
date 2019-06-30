@@ -5,17 +5,11 @@ namespace WebApi.Test.Controllers.Page
     using System.Net;
     using System.Threading.Tasks;
     using Helper.Controller;
-    using WebApi.Infrastructure.Persistence;
+    using WebApi.Infrastructure.Persistence.Seed;
     using Xunit;
 
     public class PageControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private const string NoRoleUser = "norole";
-        private const string PageOneUser = "pageone";
-        private const string PageTwoUser = "pagetwo";
-        private const string PageThreeUser = "pagethree";
-        private const string Admin = "admin";
-
         private const string PageOne = "/api/Page/PageOne";
         private const string PageTwo = "/api/Page/PageTwo";
         private const string PageThree = "/api/Page/PageThree";

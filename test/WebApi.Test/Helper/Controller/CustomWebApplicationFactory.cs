@@ -6,6 +6,7 @@ namespace WebApi.Test.Helper.Controller
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using WebApi.Infrastructure.Persistence;
+    using WebApi.Infrastructure.Persistence.Seed;
 
     public class CustomWebApplicationFactory<TStartup>
         : WebApplicationFactory<TStartup> where TStartup : class

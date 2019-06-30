@@ -16,7 +16,7 @@ namespace WebApi.Test.Controllers.User
 
     public class UserControllerTest
     {
-        private UserController GetControllerInstance(UserDbContext context)
+        private UserController CreateUserControllerObject(UserDbContext context)
         {
             var mapper = Services.CreateAutoMapperObjectUsingUserProfile();
             var repository = new UserRepository(context);
@@ -36,7 +36,7 @@ namespace WebApi.Test.Controllers.User
             var dbName = $"{nameof(Post_Create_User_Invalid_Model)}_{username}";
             using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
             {
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
 
                 var dto = new UserDto
                 {
@@ -61,7 +61,7 @@ namespace WebApi.Test.Controllers.User
 
             using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
             {
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
 
                 var result = await controller.Delete(user.Id);
                 Assert.IsType<OkResult>(result);
@@ -88,7 +88,7 @@ namespace WebApi.Test.Controllers.User
 
             using (var context = InMemoryDatabaseHelper.CreateContext(dbName))
             {
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
 
                 var result = await controller.Delete(userGenerated.Id);
                 Assert.IsType<OkResult>(result);
@@ -109,7 +109,7 @@ namespace WebApi.Test.Controllers.User
             {
                 InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
 
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
                 Assert.IsType<NotFoundObjectResult>(await controller.Delete(Guid.NewGuid().ToString()));
             }
         }
@@ -121,7 +121,7 @@ namespace WebApi.Test.Controllers.User
             using (var context = InMemoryDatabaseHelper.CreateContext(nameof(Get_Id_201_Code)))
             {
                 InMemoryDatabaseHelper.Save(new List<User> {UserSeed.CreateSpecificUser(id)}, context);
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
 
                 var actionResult = await controller.Get(id);
 
@@ -144,7 +144,7 @@ namespace WebApi.Test.Controllers.User
             using (var context = InMemoryDatabaseHelper.CreateContext(nameof(Get_Id_404_Code)))
             {
                 InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
 
                 var actionResult = await controller.Get(id);
 
@@ -163,7 +163,7 @@ namespace WebApi.Test.Controllers.User
             using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetAll_ReturnValues)))
             {
                 InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
 
                 var actionResult = controller.GetAll();
 
@@ -179,7 +179,7 @@ namespace WebApi.Test.Controllers.User
             using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_201_Code)))
             {
                 InMemoryDatabaseHelper.Save(new List<User> {UserSeed.CreateSpecificUser(UserSeed.Id)}, context);
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
 
                 var actionResult = await controller.GetByUsername(UserSeed.Username);
 
@@ -195,7 +195,7 @@ namespace WebApi.Test.Controllers.User
             using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_400_Code)))
             {
                 InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
 
                 var actionResult = await controller.GetByUsername(string.Empty);
 
@@ -211,7 +211,7 @@ namespace WebApi.Test.Controllers.User
             using (var context = InMemoryDatabaseHelper.CreateContext(nameof(GetByUsername_404_Code)))
             {
                 InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(), context);
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
 
                 var actionResult = await controller.GetByUsername("user");
 
@@ -230,7 +230,7 @@ namespace WebApi.Test.Controllers.User
             {
                 InMemoryDatabaseHelper.Save(new List<User> {user}, context);
 
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
 
                 var dto = new UserDto
                 {
@@ -251,7 +251,7 @@ namespace WebApi.Test.Controllers.User
 
             using (var context = InMemoryDatabaseHelper.CreateContext(nameof(Post_Create_User_Success)))
             {
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
                 var dto = new UserDto
                 {
                     Id = userGenerated.Id,
@@ -285,7 +285,7 @@ namespace WebApi.Test.Controllers.User
 
             using (var context = InMemoryDatabaseHelper.CreateContext(nameof(Put_Create_Not_Existing_User)))
             {
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
                 var dto = new UserDto
                 {
                     Id = UserSeed.Id,
@@ -294,7 +294,7 @@ namespace WebApi.Test.Controllers.User
                 };
 
                 var response = await controller.Put(dto);
-                Assert.IsType<ConflictObjectResult>(response.Result);
+                Assert.IsType<BadRequestObjectResult>(response.Result);
                 Assert.Null(context.User.FirstOrDefault(u => u.Id == UserSeed.Id));
             }
         }
@@ -311,7 +311,7 @@ namespace WebApi.Test.Controllers.User
 
             using (var context = InMemoryDatabaseHelper.CreateContext(nameof(Post_Create_User_Success)))
             {
-                var controller = GetControllerInstance(context);
+                var controller = CreateUserControllerObject(context);
                 var dto = new UserDto
                 {
                     Id = userGenerated.Id,

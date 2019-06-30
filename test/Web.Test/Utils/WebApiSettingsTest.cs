@@ -10,10 +10,14 @@ namespace Web.Test.Utils
         [InlineData("https://domain/", "/Page/", "https://domain//Page/")]
         public void PageUrl_Is_Correct_Formed(string baseUrl, string pageUrl, string result)
         {
+            //Arrange
             var settings = new WebApiSettings();
+
+            //Act
             settings.BaseUrl = baseUrl;
             settings.PageUrl = pageUrl;
 
+            //Assert
             Assert.NotEmpty(settings.BaseUrl);
             Assert.NotEmpty(settings.PageUrl);
             Assert.Equal(settings.BaseUrl, baseUrl);
@@ -25,10 +29,14 @@ namespace Web.Test.Utils
         [InlineData("https://domain/", "authenticate/@", "https://domain/authenticate/@")]
         public void AuthenticateUrl_Is_Correct_Formed(string baseUrl, string authenticateUrl, string result)
         {
+            //Arrange
             var settings = new WebApiSettings();
+
+            //Act
             settings.BaseUrl = baseUrl;
             settings.AuthenticateUrl = authenticateUrl;
 
+            //Assert
             Assert.NotEmpty(settings.BaseUrl);
             Assert.NotEmpty(settings.AuthenticateUrl);
             Assert.Equal(settings.BaseUrl, baseUrl);

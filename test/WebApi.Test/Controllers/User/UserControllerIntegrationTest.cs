@@ -1,10 +1,16 @@
 namespace WebApi.Test.Controllers.User
 {
+    using System;
     using System.Net;
+    using System.Net.Http;
+    using System.Text;
     using System.Threading.Tasks;
     using Helper.Controller;
+    using Helper.Database;
     using Microsoft.AspNetCore.Mvc.Testing;
-    using WebApi.Infrastructure.Persistence;
+    using Newtonsoft.Json;
+    using WebApi.Domain.DTO;
+    using WebApi.Infrastructure.Persistence.Seed;
     using Xunit;
 
     public class UserControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>
@@ -40,8 +46,8 @@ namespace WebApi.Test.Controllers.User
         {
             // Arrange
             var client = _factory.CreateClient();
-
             client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
+
             // Act
             var response = await client.GetAsync(url);
 
@@ -117,6 +123,167 @@ namespace WebApi.Test.Controllers.User
             response.EnsureSuccessStatusCode(); // Status Code 200-299
             Assert.Equal("text/html",
                 response.Content.Headers.ContentType.ToString());
+        }
+
+        [Theory]
+        [InlineData("/api/User/Post")]
+        public async Task Post_No_Admin_Forbidden(string url)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.NoRole);
+
+            var userDto = new UserDto();
+
+            // Act
+            var response = await client.PostAsync(url, new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json"));
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("/api/User/Post")]
+        public async Task Post_Admin_Bad_Request(string url)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
+
+            var userDto = new UserDto();
+
+            // Act
+            var response = await client.PostAsync(url, new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json"));
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("/api/User/Post")]
+        public async Task Post_Admin_Success(string url)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
+
+            var userDto = new UserDto
+            {
+                Username = UserSeed.Username,
+                Password = UserSeed.Password,
+                Id = Guid.NewGuid().ToString()
+            };
+
+            // Act
+            var response = await client.PostAsync(url, new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json"));
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+        }
+
+        [Theory]
+        [InlineData("/api/User/Put/")]
+        public async Task Put_No_Admin_Forbidden(string url)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.NoRole);
+
+            var userDto = new UserDto();
+
+            // Act
+            var response = await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json"));
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("/api/User/Put/")]
+        public async Task Put_Admin_User_Not_Exist(string url)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
+
+            var userDto = new UserDto();
+            userDto.Id = Guid.NewGuid().ToString();
+
+            // Act
+            var response = await client.PutAsync(url,
+                new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json"));
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("/api/User/Put/")]
+        public async Task Put_Admin_Success(string url)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
+
+            var userDto = new UserDto
+            {
+                Username = UserSeed.Username,
+                Password = UserSeed.Password,
+                Id = UserSeed.Id
+            };
+
+            // Act
+            var response = await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json"));
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("/api/User/Delete/id")]
+        public async Task Delete_No_Admin_Forbidden(string url)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.NoRole);
+
+            // Act
+            var response = await client.DeleteAsync(url);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("/api/User/Delete/id")]
+        public async Task Delete_Admin_User_Not_Exist(string url)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
+
+            // Act
+            var response = await client.DeleteAsync(url);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("/api/User/Delete/")]
+        public async Task Delete_Admin_Success(string url)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = AutorizationHeader.CreateRoleAuthorizationHeader(UserDataGenerator.Admin);
+
+            // Act
+            var response = await client.DeleteAsync(url + UserDataGenerator.GuidUserPageOne);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }
 }

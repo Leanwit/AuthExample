@@ -21,7 +21,7 @@
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -35,10 +35,10 @@
             }).AddXmlSerializerFormatters().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<UserDbContext>(options => options.UseInMemoryDatabase("Users"));
 
-            services.ConfigureSwagger();
-
             services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+            services.ConfigureSwagger();
 
             /* Repository dependencies injection*/
             services.AddScoped<IUserRepository, UserRepository>();

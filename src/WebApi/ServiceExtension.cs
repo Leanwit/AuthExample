@@ -1,6 +1,7 @@
 namespace WebApi
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
     using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,10 @@ namespace WebApi
                         Url = "https://github.com/Leanwit"
                     }
                 });
+                
+                c.AddSecurityDefinition("basic", new BasicAuthScheme {Type = "basic", Description = "basic authentication" }); 
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> { { "basic", new string[] { } },});
+                
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);

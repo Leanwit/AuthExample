@@ -103,6 +103,8 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<UserDto>> Post([FromBody] UserDto dto)
         {
+            if (dto != null && string.IsNullOrWhiteSpace(dto.Id)) return BadRequest("Id null or Empty");
+
             if (dto != null && string.IsNullOrWhiteSpace(dto.Username)) return BadRequest("Username null or Empty");
 
             if (dto != null && string.IsNullOrWhiteSpace(dto.Password)) return BadRequest("Password null or Empty");
@@ -112,9 +114,9 @@ namespace WebApi.Controllers
                 var user = await _userCreate.Execute(dto);
                 return user;
             }
-            catch (InvalidOperationException e)
+            catch (Exception e)
             {
-                return BadRequest("Username duplicated");
+                return BadRequest(e.Message);
             }
         }
 
@@ -127,9 +129,11 @@ namespace WebApi.Controllers
         /// <response code="400">Incorrect parameters</response>
         /// <response code="401">Not authorized</response>
         /// <response code="409">Conflict</response>
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<ActionResult<UserDto>> Put([FromBody] UserDto entity)
         {
+            if (entity != null && string.IsNullOrWhiteSpace(entity.Id)) return BadRequest("Id null or Empty");
+
             try
             {
                 var user = await _userUpdate.Execute(entity);
@@ -137,7 +141,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-                return Conflict(e.Message);
+                return BadRequest(e.Message);
             }
         }
 
