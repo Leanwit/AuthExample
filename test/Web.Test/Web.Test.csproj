@@ -10,6 +10,7 @@
         <PackageReference Include="coverlet.msbuild" Version="2.6.2"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
         <PackageReference Include="Moq" Version="4.11.0" />
+        <PackageReference Include="Xbehave" Version="2.4.0"/>
         <PackageReference Include="xunit" Version="2.4.0" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     </ItemGroup>
@@ -17,11 +18,5 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\Web\Web.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Reference Include="Xbehave.Core, Version=2.4.0.0, Culture=neutral, PublicKeyToken=e4957f48888f9fe8">
-            <HintPath>..\..\..\..\..\..\.nuget\packages\xbehave.core\2.4.0\lib\netstandard1.1\Xbehave.Core.dll</HintPath>
-        </Reference>
-    </ItemGroup> 
 
 </Project>
