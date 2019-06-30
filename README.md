@@ -44,3 +44,5 @@ To get coverage value using msbuild
 dotnet test /p:CollectCoverage=true /p:Exclude="[xunit.*]*
 ```
 
+## Next steps
+[Issue List](https://github.com/Leanwit/AuthExample/issues)
