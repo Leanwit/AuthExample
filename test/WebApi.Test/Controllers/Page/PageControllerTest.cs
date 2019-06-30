@@ -1,49 +1,49 @@
 namespace WebApi.Test.Controllers.Page
 {
-    using Helper.Database;
     using Microsoft.AspNetCore.Mvc;
     using WebApi.Controllers;
+    using Xbehave;
     using Xunit;
 
     public class PageControllerTest
     {
-        [Fact]
-        public void PageOne_Ensure_Ok_Status()
+        [Scenario]
+        public void PageOne_Ensure_Ok_Status(PageController controller, ActionResult result)
         {
-            //Arrange
-            var controller = new PageController();
+            "Given the controller"
+                .x(() => controller = new PageController());
 
-            //Act
-            var response = controller.PageOne();
+            "When I executed a PageOne"
+                .x(() => result = controller.PageOne());
 
-            //Assert
-            Assert.IsType<OkResult>(response);
+            "Then the result is Ok"
+                .x(() => Assert.IsType<OkResult>(result));
         }
-        
-        [Fact]
-        public void PageTwo_Ensure_Ok_Status()
+
+        [Scenario]
+        public void PageTwo_Ensure_Ok_Status(PageController controller, ActionResult result)
         {
-            //Arrange
-            var controller = new PageController();
+            "Given the controller"
+                .x(() => controller = new PageController());
 
-            //Act
-            var response = controller.PageTwo();
+            "When I executed a PageTwo"
+                .x(() => result = controller.PageTwo());
 
-            //Assert
-            Assert.IsType<OkResult>(response);
+            "Then the result is Ok"
+                .x(() => Assert.IsType<OkResult>(result));
         }
-        
-        [Fact]
-        public void PageThree_Ensure_Ok_Status()
+
+        [Scenario]
+        public void PageThree_Ensure_Ok_Status(PageController controller, ActionResult result)
         {
-            //Arrange
-            var controller = new PageController();
+            "Given the controller"
+                .x(() => controller = new PageController());
 
-            //Act
-            var response = controller.PageThree();
+            "When I executed a PageThree"
+                .x(() => result = controller.PageThree());
 
-            //Assert
-            Assert.IsType<OkResult>(response);
+            "Then the result is Ok"
+                .x(() => Assert.IsType<OkResult>(result));
         }
     }
 }
