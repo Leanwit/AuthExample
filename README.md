@@ -46,6 +46,6 @@ To get coverage value using msbuild
 ```
 dotnet test /p:CollectCoverage=true /p:Exclude="[xunit.*]*
 ```
-
+or you can check the last build in [AppVeyor](https://ci.appveyor.com/project/Leanwit/authexample)
 # Next steps
 [Issue List](https://github.com/Leanwit/AuthExample/issues)
