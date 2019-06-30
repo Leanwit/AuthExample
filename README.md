@@ -38,3 +38,9 @@ Also, it is possible to execute tests per project.
 dotnet test test/WebApi.Test
 dotnet test test/Web.Test
 ```
+
+To get coverage value using msbuild
+```
+dotnet test /p:CollectCoverage=true /p:Exclude="[xunit.*]*
+```
+
