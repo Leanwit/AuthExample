@@ -1,7 +1,7 @@
 # AuthExample
 A .Net Core project with basic authentication between Razor Web Project and WebApi Project using different roles and permissions.
 
-[![Build Status](https://travis-ci.org/Leanwit/AuthExample.svg?branch=master)](https://travis-ci.org/Leanwit/AuthExample)
+[![Build status](https://ci.appveyor.com/api/projects/status/lc6do2hmf10ew2ca?svg=true)](https://ci.appveyor.com/project/Leanwit/authexample)
 
 # Getting Started
 All commands described in this section will be executed in root project after clone the repository.
