@@ -17,7 +17,7 @@ namespace WebApi.Test.Domain
             user.Roles.Add(role);
             Assert.True(user.Id == UserSeed.Id);
             Assert.True(user.Roles.Count() == 1);
-            Assert.True(user.Roles.Any(r => r.Equals(role)));
+            Assert.Contains(role, user.Roles);
         }
 
         [Fact]

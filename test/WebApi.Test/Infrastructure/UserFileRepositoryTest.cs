@@ -104,7 +104,7 @@ namespace WebApi.Test.Infrastructure
         }
 
         [Fact]
-        public void Add_New_Value()
+        public async Task Add_New_Value()
         {
             var userCount = 10;
             var userGenerated = UserSeed.CreateUserTest();
@@ -112,18 +112,18 @@ namespace WebApi.Test.Infrastructure
             {
                 InMemoryDatabaseHelper.Save(UserSeed.CreateUsers(userCount), context);
                 var repository = new UserRepository(context);
-                repository.Add(userGenerated);
+                await repository.Add(userGenerated);
             }
 
             using (var context = InMemoryDatabaseHelper.CreateContext(CreateDatabaseName(nameof(Add_New_Value))))
             {
                 var repository = new UserRepository(context);
-                var userList = repository.GetAll();
+                var userList = repository.GetAll().ToList();
 
                 Assert.NotNull(userList);
-                Assert.True(userList.Any(u => u.Id == userGenerated.Id));
-                Assert.True(userList.Any(u => u.Username == userGenerated.Username));
                 Assert.True(userList.Count() == userCount + 1);
+                Assert.Contains(userGenerated.Id, userList.Select(u => u.Id));
+                Assert.Contains(userGenerated.Username, userList.Select(u => u.Username));
             }
         }
 
@@ -201,7 +201,7 @@ namespace WebApi.Test.Infrastructure
                 var userList = repository.GetAll();
 
                 Assert.NotNull(userList);
-                Assert.True(userList.Any(u => u.Username == UserSeed.Username));
+                Assert.Contains(UserSeed.Username, userList.Select(u => u.Username));
             }
         }
 

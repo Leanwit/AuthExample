@@ -103,6 +103,8 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<UserDto>> Post([FromBody] UserDto dto)
         {
+            if (dto != null && string.IsNullOrWhiteSpace(dto.Id)) return BadRequest("Id null or Empty");
+
             if (dto != null && string.IsNullOrWhiteSpace(dto.Username)) return BadRequest("Username null or Empty");
 
             if (dto != null && string.IsNullOrWhiteSpace(dto.Password)) return BadRequest("Password null or Empty");
@@ -114,7 +116,7 @@ namespace WebApi.Controllers
             }
             catch (InvalidOperationException e)
             {
-                return BadRequest("Username duplicated");
+                return BadRequest(e.Message);
             }
         }
 
@@ -131,7 +133,7 @@ namespace WebApi.Controllers
         public async Task<ActionResult<UserDto>> Put([FromBody] UserDto entity)
         {
             if (entity != null && string.IsNullOrWhiteSpace(entity.Id)) return BadRequest("Id null or Empty");
-            
+
             try
             {
                 var user = await _userUpdate.Execute(entity);

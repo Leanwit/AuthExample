@@ -12,16 +12,18 @@ namespace Web.Services.Filters
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var _roleAuthenticateService = (RoleAuthenticateService) context.HttpContext.RequestServices.GetService(typeof(RoleAuthenticateService));
+            var roleAuthenticateService = (RoleAuthenticateService) context.HttpContext.RequestServices.GetService(typeof(RoleAuthenticateService));
 
-            var statusCode = _roleAuthenticateService.Execute(Page, context.HttpContext).Result;
+            var statusCode = roleAuthenticateService.Execute(Page, context.HttpContext).Result;
 
             if (statusCode == HttpStatusCode.Forbidden)
             {
                 context.HttpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
+
                 var redirectTargetDictionary = new RouteValueDictionary();
                 redirectTargetDictionary.Add("action", "AccessDenied");
                 redirectTargetDictionary.Add("controller", "Account");
+
                 context.Result = new RedirectToRouteResult(redirectTargetDictionary);
             }
 

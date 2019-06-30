@@ -12,7 +12,6 @@ namespace WebApi.Domain
 
         Task<IQueryable<User>> Get(Expression<Func<User, bool>> where, Func<IQueryable<User>, IQueryable<User>> func = null);
 
-        Task<User> GetById(string id, Func<IQueryable<User>, IQueryable<User>> func = null);
         Task<User> Update(User entity);
         Task<User> Delete(string id);
 
