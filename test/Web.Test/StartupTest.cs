@@ -3,7 +3,7 @@ namespace Web.Test
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.DependencyInjection;
-    using Services;
+    using Web.Services;
     using Xunit;
 
     public class StartupTest
@@ -11,7 +11,13 @@ namespace Web.Test
         [Fact]
         public void Startup_Init()
         {
-            var webHost = WebHost.CreateDefaultBuilder().UseStartup<Startup>().Build();
+            //Arrange
+            var startup = WebHost.CreateDefaultBuilder().UseStartup<Startup>();
+
+            //Act
+            var webHost = startup.Build();
+
+            //Assert
             Assert.NotNull(webHost);
             Assert.NotNull(webHost.Services.GetRequiredService<RoleAuthenticateService>());
         }

@@ -15,17 +15,17 @@ namespace WebApi.Infrastructure.Handler
 
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        private readonly IUserAuthenticate _userAtuhenticate;
+        private readonly IUserAuthenticate _userAuthenticate;
 
         public BasicAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            IUserAuthenticate userAtuhenticate)
+            IUserAuthenticate userAuthenticate)
             : base(options, logger, encoder, clock)
         {
-            _userAtuhenticate = userAtuhenticate;
+            _userAuthenticate = userAuthenticate;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -33,7 +33,7 @@ namespace WebApi.Infrastructure.Handler
             if (!Request.Headers.ContainsKey("Authorization"))
                 return AuthenticateResult.Fail("Missing Authorization Header");
 
-            UserDto userDto = null;
+            UserDto userDto;
             try
             {
                 var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
@@ -41,7 +41,7 @@ namespace WebApi.Infrastructure.Handler
                 var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':');
                 var username = credentials[0];
                 var password = credentials[1];
-                userDto = await _userAtuhenticate.Authenticate(username, password);
+                userDto = await _userAuthenticate.Authenticate(username, password);
             }
             catch
             {
@@ -53,7 +53,7 @@ namespace WebApi.Infrastructure.Handler
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, userDto.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, userDto.Id),
                 new Claim(ClaimTypes.Name, userDto.Username)
             };
 

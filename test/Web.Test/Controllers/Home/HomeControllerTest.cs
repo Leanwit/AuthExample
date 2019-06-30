@@ -9,10 +9,13 @@ namespace Web.Test.Controllers.Home
         [Fact]
         public void Index_Should_Return_Page()
         {
+            //Arrange
             var homeController = new HomeController();
-            
+
+            //Act
             var result = homeController.Index();
-            
+
+            //Assert
             Assert.IsType<ViewResult>(result);
         }
     }
